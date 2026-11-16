@@ -154,10 +154,11 @@
   .daily b{color:var(--text)}
   .eq-head{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px;padding-top:16px;border-top:2px dotted color-mix(in srgb, var(--line) 22%, transparent)}
   .eq-head span{font-size:13px;font-weight:800;color:var(--muted)}
-  .roll{font:inherit;font-weight:800;font-size:13px;color:var(--on-accent);background:var(--accent);border:2.5px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;box-shadow:2px 2px 0 var(--shadow-c);cursor:pointer;display:flex;align-items:center;gap:4px;transition:transform .08s, box-shadow .08s}
-  .roll:active:not(:disabled){transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow-c)}
-  .roll:disabled{cursor:wait;opacity:.85}
-  .roll .dice{display:inline-block;font-size:17px;line-height:1}
+  .roll{font:inherit;font-weight:700;font-size:12.5px;color:var(--muted);background:transparent;border:1.5px solid color-mix(in srgb, var(--line) 22%, transparent);border-radius:999px;padding:3px 10px 3px 7px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s, border-color .15s, background-color .15s}
+  .roll:hover:not(:disabled){color:var(--text);border-color:color-mix(in srgb, var(--line) 50%, transparent);background:color-mix(in srgb, var(--bg) 60%, transparent)}
+  .roll:active:not(:disabled){transform:scale(.96)}
+  .roll:disabled{cursor:wait}
+  .roll .dice{display:inline-block;font-size:14px;line-height:1;filter:saturate(.7)}
   .roll.spin .dice{animation:dice .5s linear infinite}
   @keyframes dice{to{transform:rotate(360deg)}}
   .equiv{display:flex;gap:8px}
@@ -684,6 +685,12 @@
     '沒進公司也算活過一天，合理',
     '假日也領薪，不要跟別人說（偷笑）',
   ];
+  const LINES_BEFORE6 = [
+    '還沒到 6 點，再撐一下下',
+    '下班前的最後幾小時最難熬…',
+    '傍晚 6 點見，到時候一起慶祝',
+    '現在按不了，先假裝很忙',
+  ];
   const LINES_CLAIMED = [
     '今天已經領過囉，乖乖休息',
     '再按也不會多給啦，明天再來',
@@ -753,7 +760,7 @@
     const days = keys.length;
     const total = sumFor(st, keys);
     const yest = new Date(today); yest.setDate(yest.getDate() - 1);
-    save({ ...st, total, days, last: days > 0 ? dateKey(yest) : null, early: dateKey(today), created: Date.now() });
+    save({ ...st, total, days, last: days > 0 ? dateKey(yest) : null, created: Date.now() });
     amountEl.value = ''; setMood('#setup', 'tired'); updateHint();
     renderMain(true);
     paintTotal(0);
@@ -778,13 +785,13 @@
   const claimTarget = s => {
     if (!s) return null;
     const ck = cycleKey();
+    // 傍晚 6 點前 cycleKey = 昨天（只能補領到昨天）；6 點後 = 今天
     if (!s.last || ck > s.last) return ck;
-    // 設定當天傍晚 6 點前，也能先領「今天」
-    const tk = dateKey(new Date());
-    if (s.early === tk && s.last < tk) return tk;
     return null;
   };
   const claimedToday = s => !!s && claimTarget(s) === null;
+  const isBackfill = t => !!t && t < dateKey(new Date());   // 目標不是今天 → 補領
+  const waitingFor6 = s => !!s && !claimTarget(s) && s.last < dateKey(new Date());  // 還沒領今天，但未到 6 點
   const isWeekendKey = k => { const d = parseKey(k).getDay(); return d === 0 || d === 6; };
   // 待領的天數：上次領到哪天 → 這次目標日（中間沒按的天數一起補）
   const pendingDays = s => {
@@ -816,12 +823,13 @@
     const target = claimTarget(s);
     const wk = !!target && isWeekendKey(target);
     const pend = pendingDays(s).length;
-    btn.textContent = done ? '✅ 今天已經活過了'
+    btn.textContent = done ? (waitingFor6(s) ? '⏳ 傍晚 6 點後才能領今天的份' : '✅ 今天已經活過了')
+      : isBackfill(target) ? `🧾 補領 ${pend} 天薪水（領到昨天）`
       : pend > 1 ? `🎉 恭喜自己！一口氣領 ${pend} 天！`
       : wk ? '🏖️ 假日也活過一天！薪水照領！' : '🎉 恭喜自己！又活過一天！';
     if (fresh) {
-      $('#bubble').textContent = done ? pick(LINES_CLAIMED) : wk ? pick(LINES_WEEKEND_WAIT) : pick(LINES_WAIT);
-      setMood('#main', done ? 'happy' : wk ? 'smug' : 'tired');
+      $('#bubble').textContent = waitingFor6(s) ? pick(LINES_BEFORE6) : done ? pick(LINES_CLAIMED) : wk ? pick(LINES_WEEKEND_WAIT) : pick(LINES_WAIT);
+      setMood('#main', waitingFor6(s) ? 'tired' : done ? 'happy' : wk ? 'smug' : 'tired');
     }
     tick();
   }
@@ -835,7 +843,9 @@
       st.innerHTML = `下一次可以按：<span class="clock">${pad(h)}:${pad(m)}:${pad(sec)}</span> 後`;
     } else {
       const n = pendingDays(s).length;
-      st.innerHTML = n > 1
+      st.innerHTML = isBackfill(claimTarget(s))
+        ? `<span class="dot"></span>之前漏了 <b>${n}</b> 天（+NT$${fmt0(sumFor(s, pendingDays(s)))}），今天的份傍晚 6 點後再領`
+        : n > 1
         ? `<span class="dot"></span>有 <b>${n}</b> 天薪水待認領（+NT$${fmt0(sumFor(s, pendingDays(s)))}）！`
         : `<span class="dot"></span>今日份薪水待認領！`;
     }
@@ -862,9 +872,18 @@
     coinRain();
     setMood('#main', 'happy'); buddyAnim('#main', 'jump');
     const ms = Object.keys(MILESTONE).map(Number).filter(m => m > beforeDays && m <= s.days).pop();
-    const missedWeekend = days.slice(0, -1).some(isWeekendKey);
+    const back = isBackfill(target);
+    const missedWeekend = (back ? days : days.slice(0, -1)).some(isWeekendKey);
     let line;
     if (ms) line = MILESTONE[ms];
+    else if (back && missedWeekend) line = pick([
+      `週末的份補領完成！今天的等傍晚 6 點再來`,
+      `矮油～假日薪水補到了，今天的份晚點見`,
+    ]);
+    else if (back) line = pick([
+      `漏掉的 ${n} 天補回來了，今天的份傍晚 6 點後再領`,
+      `補領完成！先撐到 6 點再來領今天的`,
+    ]);
     else if (n > 1 && missedWeekend) line = pick([
       `週末偷懶沒按？正職放假照領，${n} 天一次補給你！`,
       `矮油～假日忘了按也沒差，${n} 天份一口氣入帳！`,
@@ -884,7 +903,7 @@
   $('#main .stage').addEventListener('click', () => {
     const s = load(); if (!s) return;
     const t = claimTarget(s);
-    say(!t ? pick(LINES_CLAIMED) : isWeekendKey(t) ? pick(LINES_WEEKEND_WAIT) : pick(LINES_WAIT));
+    say(waitingFor6(s) ? pick(LINES_BEFORE6) : !t ? pick(LINES_CLAIMED) : isWeekendKey(t) ? pick(LINES_WEEKEND_WAIT) : pick(LINES_WAIT));
     buddyAnim('#main', 'jump');
   });
 
@@ -1033,7 +1052,7 @@
     countUp(0, secretTotal, 1400);
     setTimeout(() => { totalEl.classList.remove('bump'); void totalEl.offsetWidth; totalEl.classList.add('bump'); }, 1350);
     setMood('#main', 'happy'); buddyAnim('#main', 'jump');
-    say('今天這份，要你自己親手按下去喔！');
+    say(new Date().getHours() < RESET_HOUR ? '今天這份，傍晚 6 點後記得來親手按下去！' : '今天這份，要你自己親手按下去喔！');
   });
 
   /* ---------- 背景動畫 ---------- */
