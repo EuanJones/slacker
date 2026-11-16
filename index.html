@@ -52,7 +52,8 @@
     overflow-x:hidden;
     transition:background-color .35s, color .35s;
   }
-  .app{width:100%;max-width:420px;position:relative}
+  .app{width:100%;max-width:420px;position:relative;z-index:1}
+  #bgfx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;transition:opacity .6s ease}
   .screen{display:none;flex-direction:column;align-items:center;gap:18px;animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
   .screen.active{display:flex}
   @keyframes pop{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
@@ -227,7 +228,7 @@
   .theme-fab:hover{transform:rotate(-12deg) scale(1.05)}
   .theme-fab:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--shadow-c)}
   .theme-fab svg{width:32px;height:32px}
-  .theme-pop{width:272px;background:var(--paper);border:3px solid var(--line);border-radius:20px;box-shadow:5px 5px 0 var(--shadow-c);padding:16px;transform-origin:100% 100%;animation:popIn .3s cubic-bezier(.2,1.6,.4,1)}
+  .theme-pop{width:292px;max-height:calc(100vh - 110px);overflow-y:auto;background:var(--paper);border:3px solid var(--line);border-radius:20px;box-shadow:5px 5px 0 var(--shadow-c);padding:16px;transform-origin:100% 100%;animation:popIn .3s cubic-bezier(.2,1.6,.4,1)}
   .theme-pop[hidden]{display:none}
   @keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
   .tp-title{font-weight:800;font-size:16px;margin-bottom:2px}
@@ -239,6 +240,12 @@
   .sw-dot i:first-child{grid-row:span 2}
   .sw.on .sw-dot{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--line)}
   .sw.on span{color:var(--primary)}
+  .tp-sec{font-weight:800;font-size:14px;margin:16px 0 8px}
+  .bg-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .bg-opts button{font:inherit;font-size:12px;font-weight:700;color:var(--text);background:var(--field);border:2.5px solid var(--line);border-radius:12px;padding:8px 2px 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .12s, background-color .2s}
+  .bg-opts button i{font-style:normal;font-size:20px;line-height:1}
+  .bg-opts button:hover{transform:translateY(-2px)}
+  .bg-opts button.on{background:var(--primary);color:#fff;box-shadow:2px 2px 0 var(--shadow-c)}
   .scheme{display:flex;background:var(--bg);border:2.5px solid var(--line);border-radius:999px;padding:3px}
   .scheme button{flex:1;border:0;background:transparent;font:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:7px 4px;border-radius:999px;cursor:pointer;transition:.2s}
   .scheme button.on{background:var(--text);color:var(--paper)}
@@ -254,6 +261,7 @@
 </style>
 </head>
 <body>
+<canvas id="bgfx" aria-hidden="true"></canvas>
 <div class="app">
 
   <!-- 角色模板 -->
@@ -468,6 +476,14 @@
       <button data-s="light">☀️ 亮色</button>
       <button data-s="dark">🌙 深色</button>
       <button data-s="auto">🖥️ 自動</button>
+    </div>
+    <div class="tp-sec">背景動畫</div>
+    <div class="bg-opts" id="bgOpts">
+      <button data-bg="none"><i>🚫</i>無</button>
+      <button data-bg="rain"><i>🌧️</i>陰雨綿綿</button>
+      <button data-bg="storm"><i>⛈️</i>暴風雨</button>
+      <button data-bg="waves"><i>🌊</i>大浪</button>
+      <button data-bg="sun"><i>☀️</i>陽光</button>
     </div>
   </div>
   <button class="theme-fab" id="themeFab" aria-label="切換配色" aria-expanded="false">
@@ -1020,6 +1036,266 @@
     say('今天這份，要你自己親手按下去喔！');
   });
 
+  /* ---------- 背景動畫 ---------- */
+  const BG = (() => {
+    const cv = document.getElementById('bgfx');
+    const ctx = cv.getContext('2d');
+    let W = 0, H = 0, mode = 'none', P = {}, raf = 0, last = 0, t = 0;
+    let drops = [], ripples = [], flash = 0, bolt = null, nextBolt = 0;
+    let waves = [], winds = [], clouds = [], shimmer = [], nextWind = 0;
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const hex = h => {
+      h = (h || '#888888').trim().replace('#', '');
+      if (h.length === 3) h = h.split('').map(c => c + c).join('');
+      const n = parseInt(h, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255];
+    };
+    const mix = (a, b, k) => { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',')})`; };
+    const rgba = (a, al) => `rgba(${hex(a).join(',')},${Math.max(0, al)})`;
+
+    function readColors() {
+      const cs = getComputedStyle(document.documentElement);
+      const g = v => cs.getPropertyValue(v).trim();
+      P = { bg: g('--bg'), paper: g('--paper'), line: g('--line'), primary: g('--primary'), pd: g('--primary-d'),
+            accent: g('--accent'), c1: g('--c1'), c2: g('--c2'), c3: g('--c3'),
+            dark: document.documentElement.dataset.scheme === 'dark' };
+    }
+    function resize() {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = innerWidth; H = innerHeight;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      init();
+    }
+    const mkDrop = (storm, fresh) => ({
+      x: rnd(-150, W + 40), y: fresh ? rnd(-H, H) : rnd(-140, -20),
+      len: storm ? rnd(18, 34) : rnd(9, 16), spd: storm ? rnd(900, 1300) : rnd(240, 360),
+      end: rnd(H * 0.55, H + 30),
+    });
+    function init() {
+      drops = []; ripples = []; waves = []; winds = []; clouds = []; shimmer = []; bolt = null; flash = 0;
+      if (mode === 'rain' || mode === 'storm') {
+        const storm = mode === 'storm';
+        const n = Math.round(W * H / (storm ? 2600 : 4600));
+        for (let i = 0; i < n; i++) drops.push(mkDrop(storm, true));
+        nextBolt = t + rnd(1.5, 4);
+      }
+      if (mode === 'waves') {
+        for (let i = 0; i < 5; i++) waves.push({
+          i, base: H * (0.66 + i * 0.075), amp: 12 + i * 5, wl: 300 - i * 30,
+          speed: (i % 2 ? -1 : 1) * (12 + i * 8), ph: rnd(0, 1000),
+        });
+      }
+      if (mode === 'sun') {
+        const n = Math.max(3, Math.round(W / 260));
+        for (let i = 0; i < n; i++) clouds.push({ x: rnd(-120, W), y: rnd(H * 0.12, H * 0.55), s: rnd(.6, 1.1), spd: rnd(8, 18) });
+        for (let i = 0; i < 7; i++) shimmer.push({ x: rnd(0, W), y: rnd(H * 0.3, H), ph: rnd(0, 6), spd: rnd(14, 26) });
+        for (let i = 0; i < 3; i++) winds.push(mkWind(true));
+        nextWind = t + rnd(.5, 1.2);
+      }
+    }
+
+    /* 文字欄位後方淡化，確保可讀性 */
+    function fadeCenter(a) {
+      const cw = Math.min(W, 470), cx = W / 2, pad = 70;
+      const g = ctx.createLinearGradient(cx - cw / 2 - pad, 0, cx + cw / 2 + pad, 0);
+      const e = pad / (cw + pad * 2);
+      g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(e, `rgba(0,0,0,${a})`);
+      g.addColorStop(1 - e, `rgba(0,0,0,${a})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.save(); ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
+    }
+
+    /* 1 & 2：雨 */
+    function drawRain(dt, storm) {
+      const slant = storm ? 0.32 + Math.sin(t * 0.7) * 0.08 : 0.14;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = rgba(P.c2, storm ? (P.dark ? .6 : .72) : (P.dark ? .55 : .7));
+      ctx.lineWidth = storm ? 2.3 : 1.8;
+      ctx.beginPath();
+      for (const d of drops) {
+        d.y += d.spd * dt; d.x += d.spd * slant * dt;
+        if (d.y > d.end) {
+          if (Math.random() < (storm ? .35 : .55)) ripples.push({ x: d.x, y: d.end, r: 1, a: 1 });
+          Object.assign(d, mkDrop(storm, false)); continue;
+        }
+        ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - d.len * slant, d.y - d.len);
+      }
+      ctx.stroke();
+      ctx.lineWidth = 1.5;
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const r = ripples[i];
+        r.r += dt * (storm ? 40 : 20); r.a -= dt * (storm ? 2.2 : 1.3);
+        if (r.a <= 0) { ripples.splice(i, 1); continue; }
+        ctx.strokeStyle = rgba(P.c2, r.a * .5);
+        ctx.beginPath(); ctx.ellipse(r.x, r.y, r.r, r.r * .35, 0, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+    function makeBolt() {
+      const pts = []; let x = rnd(W * .08, W * .92), y = -10; pts.push([x, y]);
+      const endY = rnd(H * .35, H * .65);
+      while (y < endY) { y += rnd(18, 40); x += rnd(-28, 28); pts.push([x, y]); }
+      const branches = [];
+      for (let k = 0; k < 2; k++) {
+        const s = pts[Math.floor(rnd(2, pts.length - 1))]; if (!s) continue;
+        let bx = s[0], by = s[1]; const b = [[bx, by]], dir = Math.random() < .5 ? -1 : 1;
+        for (let j = 0; j < 4; j++) { by += rnd(14, 26); bx += dir * rnd(8, 22); b.push([bx, by]); }
+        branches.push(b);
+      }
+      return { pts, branches, life: .5 };
+    }
+    function drawBolt(dt) {
+      if (!reduce && t > nextBolt) {
+        bolt = makeBolt(); flash = 1; nextBolt = t + rnd(4, 9);
+        if (Math.random() < .5) setTimeout(() => { flash = Math.max(flash, .65); }, 150);
+      }
+      if (!bolt) return;
+      bolt.life -= dt; if (bolt.life <= 0) { bolt = null; return; }
+      const a = Math.min(1, bolt.life / .5 * 1.5);
+      const path = pts => { ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); };
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      [bolt.pts, ...bolt.branches].forEach((pts, i) => {
+        path(pts); ctx.strokeStyle = rgba(P.line, .35 * a); ctx.lineWidth = i ? 6 : 10; ctx.stroke();
+        path(pts); ctx.strokeStyle = rgba(P.accent, .95 * a); ctx.lineWidth = i ? 2.5 : 4.5; ctx.stroke();
+      });
+    }
+
+    /* 3：浮世繪大浪 */
+    const waveY = (w, x) => {
+      const th = (x + w.ph) / w.wl * Math.PI * 2;
+      return w.base - w.amp * Math.pow(1 - Math.abs(Math.sin(th / 2)), 1.7) + Math.sin(th * .5 + w.i) * 4;
+    };
+    function drawWaves(dt) {
+      const cols = [mix(P.c2, P.bg, .74), mix(P.primary, P.bg, .74), mix(P.c2, P.bg, .62), mix(P.primary, P.bg, .66), mix(P.pd, P.bg, .62)];
+      const foam = mix(P.paper, P.bg, .05);
+      waves.forEach((w, idx) => {
+        w.ph += w.speed * dt;
+        const trace = (off = 0, step = 5) => {
+          ctx.beginPath();
+          for (let x = -20; x <= W + 20; x += step) { const y = waveY(w, x) + off; x === -20 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+        };
+        trace(); ctx.lineTo(W + 20, H + 10); ctx.lineTo(-20, H + 10); ctx.closePath();
+        ctx.fillStyle = cols[idx]; ctx.fill();
+        trace(); ctx.strokeStyle = rgba(P.line, .28); ctx.lineWidth = 2.2; ctx.lineJoin = 'round'; ctx.stroke();
+        for (let k = 1; k <= 2; k++) { trace(k * 10 + w.amp * .2 * k, 6); ctx.strokeStyle = rgba(P.line, .09); ctx.lineWidth = 1.5; ctx.stroke(); }
+        // 浪頭捲曲 + 浪花爪
+        const dir = w.speed > 0 ? 1 : -1;
+        const n0 = Math.floor((-60 + w.ph) / w.wl), n1 = Math.ceil((W + 60 + w.ph) / w.wl);
+        ctx.lineCap = 'round';
+        for (let n = n0; n <= n1; n++) {
+          const cx = n * w.wl - w.ph, cy = waveY(w, cx), rr = w.amp * .38 + 4;
+          ctx.beginPath();
+          if (dir > 0) ctx.arc(cx + rr, cy + rr, rr, Math.PI, Math.PI * 2.45);
+          else ctx.arc(cx - rr, cy + rr, rr, 0, -Math.PI * 1.45, true);
+          ctx.strokeStyle = rgba(P.line, .26); ctx.lineWidth = 2; ctx.stroke();
+          for (let j = 0; j < 3; j++) {
+            ctx.beginPath(); ctx.arc(cx + dir * (rr * 2 + 3 + j * 7), cy + rr * .6 + j * 4, 3.4 - j * .7, 0, Math.PI * 2);
+            ctx.fillStyle = foam; ctx.fill(); ctx.strokeStyle = rgba(P.line, .3); ctx.lineWidth = 1.3; ctx.stroke();
+          }
+        }
+      });
+    }
+
+    /* 4：陽光 */
+    function mkWind(fresh) {
+      return { y: rnd(H * .1, H * .85), x: fresh ? rnd(0, W) : -60, spd: rnd(200, 320), len: rnd(110, 210), amp: rnd(5, 11), ph: rnd(0, 6), curl: Math.random() < .6 };
+    }
+    function drawCloud(x, y, s) {
+      const parts = [[0, 0, 20], [22, -12, 26], [48, -4, 22], [68, 4, 16], [30, 8, 20]];
+      const shape = () => { ctx.beginPath(); parts.forEach(([dx, dy, r]) => { ctx.moveTo(x + (dx + r) * s, y + dy * s); ctx.arc(x + dx * s, y + dy * s, r * s, 0, Math.PI * 2); }); };
+      shape(); ctx.strokeStyle = rgba(P.line, .32); ctx.lineWidth = 5; ctx.stroke();
+      shape(); ctx.fillStyle = P.dark ? mix(P.c2, P.bg, .55) : mix(P.paper, P.c2, .18); ctx.fill();
+    }
+    function drawSun(dt) {
+      // 熱浪（曬到發燙的扭曲線）
+      ctx.lineCap = 'round'; ctx.lineWidth = 2;
+      for (const s of shimmer) {
+        s.y -= s.spd * dt; if (s.y < H * .2) { s.y = H + 40; s.x = rnd(0, W); }
+        const life = Math.sin(Math.min(1, Math.max(0, (H + 40 - s.y) / (H * .8))) * Math.PI);
+        ctx.strokeStyle = rgba(P.accent, .35 * life);
+        ctx.beginPath();
+        for (let k = 0; k <= 60; k += 4) { const yy = s.y - k, xx = s.x + Math.sin(k * .15 + t * 3 + s.ph) * 4; k ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
+        ctx.stroke();
+      }
+      // 太陽
+      const R = Math.min(64, Math.max(42, W * .085)), sx = W - R * .95, sy = R * 1.05;
+      const glow = ctx.createRadialGradient(sx, sy, R * .8, sx, sy, R * 2.8);
+      glow.addColorStop(0, rgba(P.accent, .28)); glow.addColorStop(1, rgba(P.accent, 0));
+      ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(sx, sy, R * 2.8, 0, Math.PI * 2); ctx.fill();
+      ctx.save(); ctx.translate(sx, sy); ctx.rotate(t * .15);
+      for (let i = 0; i < 12; i++) {
+        ctx.rotate(Math.PI * 2 / 12);
+        const L = R * 1.7 + Math.sin(t * 2 + i) * R * .08;
+        ctx.beginPath(); ctx.moveTo(R * 1.14, -R * .13); ctx.lineTo(L, 0); ctx.lineTo(R * 1.14, R * .13); ctx.closePath();
+        ctx.fillStyle = rgba(P.accent, .6); ctx.fill(); ctx.strokeStyle = rgba(P.line, .25); ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.restore();
+      ctx.beginPath(); ctx.arc(sx, sy, R, 0, Math.PI * 2);
+      ctx.fillStyle = mix(P.accent, P.bg, .08); ctx.fill(); ctx.strokeStyle = rgba(P.line, .5); ctx.lineWidth = 3; ctx.stroke();
+      ctx.strokeStyle = rgba(P.line, .55); ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(sx - R * .44, sy - R * .04); ctx.quadraticCurveTo(sx - R * .3, sy + R * .1, sx - R * .16, sy - R * .04);
+      ctx.moveTo(sx + R * .16, sy - R * .04); ctx.quadraticCurveTo(sx + R * .3, sy + R * .1, sx + R * .44, sy - R * .04);
+      ctx.moveTo(sx - R * .12, sy + R * .3); ctx.quadraticCurveTo(sx, sy + R * .4, sx + R * .12, sy + R * .3);
+      ctx.stroke();
+      ctx.fillStyle = rgba(P.c3, .65);
+      [[-1], [1]].forEach(([d]) => { ctx.beginPath(); ctx.ellipse(sx + d * R * .52, sy + R * .22, R * .13, R * .075, 0, 0, Math.PI * 2); ctx.fill(); });
+      // 小雲
+      for (const c of clouds) {
+        c.x += c.spd * dt; if (c.x > W + 40) { c.x = -110 * c.s - 40; c.y = rnd(H * .12, H * .55); }
+        ctx.globalAlpha = P.dark ? .7 : .8; drawCloud(c.x, c.y, c.s); ctx.globalAlpha = 1;
+      }
+      // 微風線條
+      if (t > nextWind) { winds.push(mkWind(false)); nextWind = t + rnd(.7, 1.6); }
+      ctx.lineWidth = 2.5;
+      for (let i = winds.length - 1; i >= 0; i--) {
+        const w = winds[i]; w.x += w.spd * dt;
+        if (w.x - w.len > W + 40) { winds.splice(i, 1); continue; }
+        const a = Math.sin(Math.min(1, Math.max(0, w.x / (W + w.len))) * Math.PI);
+        ctx.strokeStyle = rgba(P.c2, (P.dark ? .65 : .75) * a);
+        ctx.beginPath();
+        for (let k = 0; k <= w.len; k += 6) {
+          const px = w.x - k, py = w.y + Math.sin(px * .022 + w.ph) * w.amp;
+          k ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+        }
+        ctx.stroke();
+        if (w.curl) {
+          const hy = w.y + Math.sin(w.x * .022 + w.ph) * w.amp;
+          ctx.beginPath(); ctx.arc(w.x - 2, hy - 8, 8, Math.PI * .5, Math.PI * 2.2, true); ctx.stroke();
+        }
+      }
+    }
+
+    function frame(ts) {
+      raf = 0;
+      const dt = Math.min(.05, Math.max(0, (ts - last) / 1000)) || .016; last = ts; t += dt;
+      ctx.clearRect(0, 0, W, H);
+      if (mode === 'rain') { drawRain(dt, false); fadeCenter(W < 640 ? .25 : .4); }
+      else if (mode === 'storm') { drawRain(dt, true); fadeCenter(W < 640 ? .25 : .4); drawBolt(dt); }
+      else if (mode === 'waves') drawWaves(dt);
+      else if (mode === 'sun') { drawSun(dt); }
+      if (mode === 'storm' && flash > 0) { ctx.fillStyle = rgba(P.accent, flash * .14); ctx.fillRect(0, 0, W, H); flash = Math.max(0, flash - dt * 3.2); }
+      if (mode !== 'none' && !reduce && !document.hidden) raf = requestAnimationFrame(frame);
+    }
+    function start() {
+      if (raf) cancelAnimationFrame(raf); raf = 0;
+      if (mode === 'none') { ctx.clearRect(0, 0, W, H); return; }
+      last = performance.now();
+      if (reduce) { frame(last + 16); return; }   // 減少動態：只畫一張靜態畫面
+      raf = requestAnimationFrame(frame);
+    }
+    addEventListener('resize', () => { resize(); start(); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
+    resize();
+    return {
+      setMode(m) {
+        mode = m; readColors(); init();
+        cv.style.opacity = 0; start();
+        requestAnimationFrame(() => requestAnimationFrame(() => { cv.style.opacity = 1; }));
+      },
+      refreshColors() { readColors(); if (reduce) start(); },
+    };
+  })();
+
   /* ---------- 配色切換 ---------- */
   const THEMES = [
     { id: 'tomato', name: '番茄奶油', c: ['#ff6b5b', '#ffd23f', '#5fd3a8'] },
@@ -1031,7 +1307,9 @@
   ];
   const root = document.documentElement;
   const darkMQ = matchMedia('(prefers-color-scheme: dark)');
-  let pref = Object.assign({ theme: 'tomato', scheme: 'auto' }, getJSON(THEME_KEY) || {});
+  let pref = Object.assign({ theme: 'tomato', scheme: 'auto', bg: 'none' }, getJSON(THEME_KEY) || {});
+  const BG_MODES = ['none', 'rain', 'storm', 'waves', 'sun'];
+  if (!BG_MODES.includes(pref.bg)) pref.bg = 'none';
   if (!THEMES.some(t => t.id === pref.theme)) pref.theme = 'tomato';
 
   const swWrap = $('#swatches');
@@ -1049,6 +1327,8 @@
     root.style.colorScheme = scheme;
     swWrap.querySelectorAll('.sw').forEach(b => b.classList.toggle('on', b.dataset.id === pref.theme));
     $('#scheme').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.s === pref.scheme));
+    $('#bgOpts').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.bg === pref.bg));
+    BG.refreshColors();
   }
   const themeChanged = () => {
     setJSON(THEME_KEY, pref); applyTheme();
@@ -1063,6 +1343,18 @@
     pref.scheme = b.dataset.s; themeChanged();
   });
   darkMQ.addEventListener?.('change', () => { if (pref.scheme === 'auto') applyTheme(); });
+  const LINES_BG = {
+    none:  ['天氣恢復平靜，繼續苟活', '什麼都沒有，跟我的存款一樣'],
+    rain:  ['連天氣都在幫我哭…', '細雨綿綿，心情也綿綿', '下雨天，最適合裝忙'],
+    storm: ['外面在打雷，裡面在被老闆雷', '閃電好大，跟主管的臉色一樣', '暴風雨中也要準時打卡'],
+    waves: ['人生起起伏伏，薪水沒什麼起伏', '浪好大，工作量也是', '乘風破浪，或是被浪打翻'],
+    sun:   ['太陽好大，好想請假', '曬到融化，但還是要上班', '天氣這麼好，為什麼我在公司'],
+  };
+  $('#bgOpts').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    pref.bg = b.dataset.bg; setJSON(THEME_KEY, pref); applyTheme(); BG.setMode(pref.bg);
+    if ($('#main').classList.contains('active')) { say(pick(LINES_BG[pref.bg])); buddyAnim('#main', 'jump'); }
+  });
 
   const pop = $('#themePop'), fab = $('#themeFab');
   const togglePop = open => {
@@ -1076,6 +1368,7 @@
     else togglePop(false);
   });
   applyTheme();
+  BG.setMode(pref.bg);
 
   /* ---------- 啟動 ---------- */
   if (load()) { renderMain(true); show('main'); }
