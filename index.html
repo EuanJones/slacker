@@ -1199,8 +1199,11 @@
     }
 
     /* 4：陽光 */
+    // 一陣風：在畫面中途出現 → 往前吹 → 從尾巴收掉消失
     function mkWind(fresh) {
-      return { y: rnd(H * .1, H * .85), x: fresh ? rnd(0, W) : -60, spd: rnd(200, 320), len: rnd(110, 210), amp: rnd(5, 11), ph: rnd(0, 6), curl: Math.random() < .6 };
+      const dur = rnd(2.2, 3.6);
+      return { x0: rnd(-60, W * .75), y: rnd(H * .1, H * .85), D: rnd(220, 440), len: rnd(90, 170),
+               amp: rnd(4, 9), ph: rnd(0, 6), curl: Math.random() < .55, life: fresh ? rnd(0, dur * .6) : 0, dur };
     }
     function drawCloud(x, y, s) {
       const parts = [[0, 0, 20], [22, -12, 26], [48, -4, 22], [68, 4, 16], [30, 8, 20]];
@@ -1248,24 +1251,33 @@
         c.x += c.spd * dt; if (c.x > W + 40) { c.x = -110 * c.s - 40; c.y = rnd(H * .12, H * .55); }
         drawCloud(c.x, c.y, c.s);
       }
-      // 微風線條
-      if (t > nextWind) { winds.push(mkWind(false)); nextWind = t + rnd(.7, 1.6); }
-      ctx.lineWidth = 2.5;
+      // 微風線條（整條含捲尾是同一個 path，一次描邊，不會有疊色）
+      if (t > nextWind) { winds.push(mkWind(false)); nextWind = t + rnd(.6, 1.4); }
+      ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      const easeOut = x => 1 - Math.pow(1 - x, 2);
       for (let i = winds.length - 1; i >= 0; i--) {
-        const w = winds[i]; w.x += w.spd * dt;
-        if (w.x - w.len > W + 40) { winds.splice(i, 1); continue; }
-        const a = Math.sin(Math.min(1, Math.max(0, w.x / (W + w.len))) * Math.PI);
+        const w = winds[i]; w.life += dt;
+        const p = w.life / w.dur;
+        if (p >= 1) { winds.splice(i, 1); continue; }
+        const head = w.x0 + w.D * easeOut(p);
+        const tp = Math.max(0, (p - .35) / .65);          // 後段開始從尾巴收
+        const tail = Math.max(w.x0, head - w.len * (1 - tp));
+        if (head - tail < 4) continue;
+        const yAt = x => w.y + Math.sin(x * .02 + w.ph) * w.amp;
+        ctx.beginPath(); ctx.moveTo(tail, yAt(tail));
+        for (let x = tail + 6; x < head; x += 6) ctx.lineTo(x, yAt(x));
+        const hy = yAt(head); ctx.lineTo(head, hy);
+        if (w.curl && head - tail > 40) {
+          // 從風頭順著方向往上捲一圈（半徑逐漸變小的螺旋）
+          const r0 = 9 * (1 - tp * .6), cy = hy - r0;
+          for (let k = 1; k <= 18; k++) {
+            const th = Math.PI / 2 - k / 18 * Math.PI * 1.55, r = r0 * (1 - k / 18 * .35);
+            ctx.lineTo(head + Math.cos(th) * r, cy + r0 - r + Math.sin(th) * r);
+          }
+        }
+        const a = Math.min(1, Math.sin(p * Math.PI) * 1.6);
         ctx.strokeStyle = rgba(P.c2, (P.dark ? .65 : .75) * a);
-        ctx.beginPath();
-        for (let k = 0; k <= w.len; k += 6) {
-          const px = w.x - k, py = w.y + Math.sin(px * .022 + w.ph) * w.amp;
-          k ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-        }
         ctx.stroke();
-        if (w.curl) {
-          const hy = w.y + Math.sin(w.x * .022 + w.ph) * w.amp;
-          ctx.beginPath(); ctx.arc(w.x - 2, hy - 8, 8, Math.PI * .5, Math.PI * 2.2, true); ctx.stroke();
-        }
       }
     }
 
