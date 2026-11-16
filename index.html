@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" data-theme="tomato" data-scheme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>又活過一天存錢筒</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;600;800&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     配色：每組都有 light / dark
+     ========================================================= */
+  :root{
+    --on-accent:#1d1712;
+    --char:#2b2118;            /* 角色線條固定深色，像貼紙 */
+    --body:#fffaf0;
+    --shadow-c:var(--line);
+    --hl:var(--accent);
+    --font:"Chiron GoRound TC","Noto Sans TC",system-ui,sans-serif;
+    --num:"Noto Sans TC",var(--font);
+  }
+  html[data-scheme="dark"]{ --shadow-c:#000; --hl:var(--primary-d); --body:#efe4d2; }
+
+  /* 番茄奶油 */
+  html[data-theme="tomato"][data-scheme="light"]{--bg:#fff4e0;--dots:rgba(43,33,24,.12);--paper:#fffaf0;--field:#ffffff;--text:#2b2118;--muted:#8a7a68;--line:#2b2118;--primary:#ff6b5b;--primary-d:#e04e3e;--primary-h:#ff7d6e;--accent:#ffd23f;--c1:#5fd3a8;--c2:#7cc6fe;--c3:#ffb5c2;--dis:#e6dccb}
+  html[data-theme="tomato"][data-scheme="dark"]{--bg:#1f1a16;--dots:rgba(255,241,220,.07);--paper:#2c2520;--field:#3a312a;--text:#fff1dc;--muted:#b7a48e;--line:#fff1dc;--primary:#ff6b5b;--primary-d:#c23b2c;--primary-h:#ff8577;--accent:#ffd23f;--c1:#5fd3a8;--c2:#7cc6fe;--c3:#ff9fb2;--dis:#463c34}
+  /* 薄荷汽水 */
+  html[data-theme="mint"][data-scheme="light"]{--bg:#e3f9ef;--dots:rgba(19,51,42,.12);--paper:#f6fffa;--field:#ffffff;--text:#13332a;--muted:#5f8a7b;--line:#13332a;--primary:#12b886;--primary-d:#0a8f67;--primary-h:#20c997;--accent:#ffe066;--c1:#ff8787;--c2:#74c0fc;--c3:#b197fc;--dis:#cfe9dd}
+  html[data-theme="mint"][data-scheme="dark"]{--bg:#0f201b;--dots:rgba(230,255,244,.07);--paper:#183029;--field:#21403a;--text:#e6fff4;--muted:#8fbfae;--line:#e6fff4;--primary:#20c997;--primary-d:#0a8f67;--primary-h:#38d9a9;--accent:#ffe066;--c1:#ff8787;--c2:#74c0fc;--c3:#b197fc;--dis:#2a453d}
+  /* 葡萄氣泡 */
+  html[data-theme="grape"][data-scheme="light"]{--bg:#f1ebff;--dots:rgba(42,27,74,.12);--paper:#fbf8ff;--field:#ffffff;--text:#2a1b4a;--muted:#7d6ca3;--line:#2a1b4a;--primary:#845ef7;--primary-d:#5f3dc4;--primary-h:#9775fa;--accent:#ffd43b;--c1:#63e6be;--c2:#ff8cc6;--c3:#74c0fc;--dis:#ddd3f5}
+  html[data-theme="grape"][data-scheme="dark"]{--bg:#17112a;--dots:rgba(241,234,255,.07);--paper:#231a3d;--field:#2e2450;--text:#f1eaff;--muted:#a99bd0;--line:#f1eaff;--primary:#9775fa;--primary-d:#5f3dc4;--primary-h:#b197fc;--accent:#ffd43b;--c1:#63e6be;--c2:#ff8cc6;--c3:#74c0fc;--dis:#352b55}
+  /* 海鹽蘇打 */
+  html[data-theme="ocean"][data-scheme="light"]{--bg:#e7f2ff;--dots:rgba(16,42,67,.12);--paper:#f7fbff;--field:#ffffff;--text:#102a43;--muted:#5f7a95;--line:#102a43;--primary:#3a86ff;--primary-d:#1c5fd1;--primary-h:#5c9bff;--accent:#ffbe0b;--c1:#4cd4b0;--c2:#ff7096;--c3:#ffd6a5;--dis:#d3e2f3}
+  html[data-theme="ocean"][data-scheme="dark"]{--bg:#0d1726;--dots:rgba(232,242,255,.07);--paper:#16233a;--field:#1f3050;--text:#e8f2ff;--muted:#8ea6c4;--line:#e8f2ff;--primary:#4c94ff;--primary-d:#1c5fd1;--primary-h:#74abff;--accent:#ffbe0b;--c1:#4cd4b0;--c2:#ff7096;--c3:#ffd6a5;--dis:#24344f}
+  /* 草莓牛奶 */
+  html[data-theme="berry"][data-scheme="light"]{--bg:#ffedf1;--dots:rgba(61,22,38,.12);--paper:#fff8fa;--field:#ffffff;--text:#3d1626;--muted:#a06a7d;--line:#3d1626;--primary:#ff4d8d;--primary-d:#d6336c;--primary-h:#ff6b9f;--accent:#ffd23f;--c1:#8ce99a;--c2:#91a7ff;--c3:#ffc078;--dis:#f5d7df}
+  html[data-theme="berry"][data-scheme="dark"]{--bg:#241219;--dots:rgba(255,238,243,.07);--paper:#331b25;--field:#432532;--text:#ffeef3;--muted:#c995a7;--line:#ffeef3;--primary:#ff5c97;--primary-d:#c2255c;--primary-h:#ff7aab;--accent:#ffd23f;--c1:#8ce99a;--c2:#91a7ff;--c3:#ffc078;--dis:#4a2a37}
+  /* 檸檬加班 */
+  html[data-theme="lemon"][data-scheme="light"]{--bg:#fff9cf;--dots:rgba(46,38,10,.12);--paper:#fffde9;--field:#ffffff;--text:#2e260a;--muted:#8a7d4a;--line:#2e260a;--primary:#ff8a00;--primary-d:#d96b00;--primary-h:#ff9c26;--accent:#c0eb75;--c1:#69db7c;--c2:#4dabf7;--c3:#ffa8a8;--dis:#efe8b8}
+  html[data-theme="lemon"][data-scheme="dark"]{--bg:#1d1a0c;--dots:rgba(255,249,207,.07);--paper:#2a2612;--field:#38321a;--text:#fff9d6;--muted:#bfb382;--line:#fff9d6;--primary:#ff9a1f;--primary-d:#c25e00;--primary-h:#ffad47;--accent:#c0eb75;--c1:#69db7c;--c2:#4dabf7;--c3:#ffa8a8;--dis:#423b20}
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    font-family:var(--font);
+    color:var(--text);
+    background:radial-gradient(circle at 1px 1px, var(--dots) 1.5px, transparent 0) 0 0/22px 22px, var(--bg);
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:28px 16px 100px;
+    overflow-x:hidden;
+    transition:background-color .35s, color .35s;
+  }
+  .app{width:100%;max-width:420px;position:relative}
+  .screen{display:none;flex-direction:column;align-items:center;gap:18px;animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+  .screen.active{display:flex}
+  @keyframes pop{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
+
+  /* =========================================================
+     角色：鬱卒上班族豆腐
+     ========================================================= */
+  .buddy{width:170px;height:170px;animation:bob 3.2s ease-in-out infinite;transform-origin:50% 92%;overflow:visible}
+  .buddy.small{width:140px;height:140px}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg) scaleY(1)}50%{transform:translateY(2px) rotate(1deg) scaleY(.97)}}
+  .buddy[data-mood="happy"]{animation:bobHappy 1.6s ease-in-out infinite}
+  @keyframes bobHappy{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+  .buddy.jump{animation:jump .7s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes jump{0%{transform:scale(1,1)}20%{transform:scale(1.15,.8)}50%{transform:translateY(-36px) scale(.9,1.1) rotate(-8deg)}80%{transform:scale(1.05,.95)}100%{transform:none}}
+  .buddy.shake{animation:shake .35s linear infinite}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-3deg)}75%{transform:translateX(4px) rotate(3deg)}}
+
+  .b-body,.b-hand{fill:var(--body);transition:fill .35s}
+  .tie{fill:var(--primary);transition:fill .35s}
+  .buddy .x{display:none}
+  .buddy[data-mood="tired"] .t-tired,
+  .buddy[data-mood="happy"] .t-happy,
+  .buddy[data-mood="smug"]  .t-smug,
+  .buddy[data-mood="panic"] .t-panic,
+  .buddy[data-mood="dead"]  .t-dead{display:inline}
+
+  .drop{animation:rain 1s linear infinite}
+  .drop:nth-child(2){animation-delay:.33s}
+  .drop:nth-child(3){animation-delay:.66s}
+  @keyframes rain{0%{transform:translateY(-4px);opacity:0}20%{opacity:1}100%{transform:translateY(14px);opacity:0}}
+  .cloud-g{animation:drift 4s ease-in-out infinite}
+  @keyframes drift{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+  .steam{animation:steam 2s ease-in-out infinite}
+  @keyframes steam{0%{opacity:0;transform:translateY(4px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-8px)}}
+  .sweat{animation:drip 1s ease-in infinite}
+  .sweat.s2{animation-delay:.5s}
+  @keyframes drip{0%{transform:translateY(0);opacity:1}100%{transform:translateY(10px);opacity:0}}
+  .soul{animation:soul 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:30% 100%}
+  @keyframes soul{0%{transform:translate(0,0) scale(.3);opacity:0}20%{opacity:.95}100%{transform:translate(44px,-70px) scale(1) rotate(12deg);opacity:0}}
+  .tear{animation:tear 1.4s ease-in infinite}
+  @keyframes tear{0%{transform:translateY(0);opacity:1}100%{transform:translateY(8px);opacity:.2}}
+
+  /* =========================================================
+     共用元件
+     ========================================================= */
+  h1{font-size:30px;font-weight:800;text-align:center;line-height:1.3;letter-spacing:1px}
+  h1 .hl{background:linear-gradient(transparent 55%, var(--hl) 55%);padding:0 4px}
+  .sub{color:var(--muted);text-align:center;font-size:15px;line-height:1.6}
+
+  .card{width:100%;background:var(--paper);border:3px solid var(--line);border-radius:22px;box-shadow:4px 4px 0 var(--shadow-c);padding:22px 20px;position:relative;transition:background-color .35s,border-color .35s}
+  .tabs{display:flex;background:var(--bg);border:2.5px solid var(--line);border-radius:999px;padding:4px;margin-bottom:18px}
+  .tab{flex:1;border:0;background:transparent;font:inherit;font-weight:700;font-size:14px;padding:8px 6px;border-radius:999px;cursor:pointer;color:var(--muted);transition:.2s}
+  .tab.on{background:var(--text);color:var(--paper)}
+  label.lbl{display:block;font-weight:700;font-size:15px;margin-bottom:8px}
+  .money-input{display:flex;align-items:center;border:3px solid var(--line);border-radius:16px;background:var(--field);overflow:hidden;transition:transform .15s, box-shadow .15s}
+  .money-input:focus-within{transform:translateY(-2px);box-shadow:0 4px 0 var(--shadow-c)}
+  .money-input span{background:var(--accent);color:var(--on-accent);padding:14px;font-weight:800;border-right:3px solid var(--line);font-size:18px}
+  .money-input input{flex:1;border:0;outline:0;font:inherit;font-size:26px;font-weight:800;padding:10px 14px;width:100%;background:transparent;color:var(--text)}
+  .money-input input::placeholder{color:var(--muted);opacity:.5}
+  .hint{font-size:13px;color:var(--muted);margin-top:10px;min-height:20px;line-height:1.5}
+  .hint b{color:var(--primary)}
+  .shakeit{animation:shakeit .4s}
+  @keyframes shakeit{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
+  .btn{font:inherit;font-weight:800;border:3px solid var(--line);border-radius:18px;cursor:pointer;box-shadow:4px 4px 0 var(--shadow-c);transition:transform .08s, box-shadow .08s, background-color .2s;-webkit-tap-highlight-color:transparent;user-select:none;color:var(--on-accent)}
+  .btn:active:not(:disabled){transform:translate(4px,4px);box-shadow:0 0 0 var(--shadow-c)}
+  .btn-primary{width:100%;background:var(--primary);color:#fff;font-size:20px;padding:18px 16px;text-shadow:2px 2px 0 var(--primary-d)}
+  .btn-primary:hover:not(:disabled){background:var(--primary-h)}
+  .btn-next{width:100%;background:var(--accent);font-size:18px;padding:14px;margin-top:18px}
+  .btn-next:hover{filter:brightness(1.05)}
+  .btn-big{font-size:22px;padding:22px 16px;position:relative;overflow:hidden}
+  .btn-big::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);animation:shine 2.8s ease-in-out infinite}
+  @keyframes shine{0%,60%{left:-60%}100%{left:130%}}
+  .btn-big:disabled{background:var(--dis);color:var(--muted);text-shadow:none;cursor:not-allowed;box-shadow:2px 2px 0 var(--shadow-c);transform:translate(2px,2px)}
+  .btn-big:disabled::after{display:none}
+  .btn-ghost{background:transparent;border:0;box-shadow:none;font:inherit;color:var(--muted);font-size:14px;cursor:pointer;text-decoration:underline dotted;text-underline-offset:4px;padding:6px 10px}
+  .btn-ghost:hover{color:var(--primary)}
+
+  /* 主畫面 */
+  .topbar{width:100%;display:flex;justify-content:space-between;align-items:center}
+  .badge{background:var(--c1);color:var(--on-accent);border:2.5px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px;box-shadow:2px 2px 0 var(--shadow-c)}
+  .badge.alt{background:var(--c2)}
+  .stage{display:flex;flex-direction:column;align-items:center;position:relative;margin-top:4px;cursor:pointer}
+  .bubble{background:var(--paper);border:3px solid var(--line);border-radius:18px;padding:10px 16px;font-weight:700;font-size:15px;position:relative;max-width:300px;text-align:center;line-height:1.5;margin-bottom:6px;box-shadow:3px 3px 0 var(--shadow-c)}
+  .bubble::after{content:"";position:absolute;left:50%;bottom:-12px;width:18px;height:18px;background:var(--paper);border-right:3px solid var(--line);border-bottom:3px solid var(--line);transform:translateX(-50%) rotate(45deg)}
+  .bubble.pop{animation:bubblepop .4s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes bubblepop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+
+  .total-card{text-align:center;padding-top:26px}
+  .tag{position:absolute;top:-16px;left:50%;transform:translateX(-50%) rotate(-3deg);background:var(--accent);color:var(--on-accent);border:2.5px solid var(--line);border-radius:10px;padding:4px 14px;font-weight:800;font-size:14px;white-space:nowrap;box-shadow:2px 2px 0 var(--shadow-c)}
+  .total{font-family:var(--num);font-weight:900;font-size:46px;letter-spacing:-1px;line-height:1.1;margin:6px 0 14px;word-break:break-all}
+  .total small{font-size:22px;margin-right:4px;vertical-align:6px}
+  .total.bump{animation:bump .5s cubic-bezier(.2,1.8,.4,1)}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18);color:var(--primary)}100%{transform:scale(1)}}
+  .daily{color:var(--muted);font-weight:700;font-size:14px}
+  .daily b{color:var(--text)}
+  .eq-head{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px;padding-top:16px;border-top:2px dotted color-mix(in srgb, var(--line) 22%, transparent)}
+  .eq-head span{font-size:13px;font-weight:800;color:var(--muted)}
+  .roll{font:inherit;font-weight:800;font-size:13px;color:var(--on-accent);background:var(--accent);border:2.5px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;box-shadow:2px 2px 0 var(--shadow-c);cursor:pointer;display:flex;align-items:center;gap:4px;transition:transform .08s, box-shadow .08s}
+  .roll:active:not(:disabled){transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow-c)}
+  .roll:disabled{cursor:wait;opacity:.85}
+  .roll .dice{display:inline-block;font-size:17px;line-height:1}
+  .roll.spin .dice{animation:dice .5s linear infinite}
+  @keyframes dice{to{transform:rotate(360deg)}}
+  .equiv{display:flex;gap:8px}
+  .slot-box{flex:1;min-width:0;height:113px;overflow:hidden;position:relative;border-radius:14px;
+    background:color-mix(in srgb, var(--bg) 65%, var(--paper));
+    border:1.5px solid color-mix(in srgb, var(--line) 16%, transparent);transition:background-color .35s}
+  .slot-box.rolling::before,.slot-box.rolling::after{content:"";position:absolute;left:0;right:0;height:16px;z-index:2;pointer-events:none}
+  .slot-box.rolling::before{top:0;background:linear-gradient(color-mix(in srgb, var(--bg) 65%, var(--paper)),transparent)}
+  .slot-box.rolling::after{bottom:0;background:linear-gradient(transparent,color-mix(in srgb, var(--bg) 65%, var(--paper)))}
+  .strip{will-change:transform}
+  .eq-item{height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 4px;font-size:12.5px;font-weight:700;line-height:1.35;text-align:center;color:var(--muted)}
+  .eq-item .e-ico{font-size:24px;line-height:1.1}
+  .eq-item .e-txt{color:var(--text);white-space:nowrap;letter-spacing:-.2px}
+  .eq-item .e-sub{font-size:11px;color:var(--muted);font-weight:700;margin-top:-3px;white-space:nowrap}
+  .eq-item b{font-size:17px;font-family:var(--num);color:var(--text)}
+  .slot-box.landed{animation:land .35s cubic-bezier(.2,1.8,.4,1)}
+  @keyframes land{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:none}}
+  .eq-note{font-size:11px;color:var(--muted);opacity:.75;margin-top:8px;text-align:right}
+
+  .status{font-size:14px;font-weight:700;color:var(--muted);text-align:center;min-height:22px;line-height:1.6}
+  .status .clock{font-family:var(--num);color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:8px;padding:1px 8px;margin:0 2px;font-variant-numeric:tabular-nums}
+  .status .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--primary);margin-right:6px;animation:blink 1s infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .footer-note{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;opacity:.85}
+
+  /* 特效 */
+  .fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+  .coin{position:absolute;top:-60px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff3b0 0 18%, #ffd23f 20% 62%, #f4b400 64%);border:3px solid #2b2118;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#2b2118;font-family:"Noto Sans TC",sans-serif;animation:fall linear forwards}
+  @keyframes fall{0%{transform:translateY(0) rotateY(0) rotate(0)}100%{transform:translateY(calc(100vh + 120px)) rotateY(1080deg) rotate(var(--r))}}
+  .confetti{position:absolute;top:-20px;width:10px;height:16px;border:2px solid #2b2118;border-radius:3px;animation:fall linear forwards}
+  .floater{position:fixed;z-index:60;font-family:var(--num);font-weight:900;font-size:34px;color:var(--primary);-webkit-text-stroke:2px var(--line);paint-order:stroke fill;pointer-events:none;animation:floatup 1.6s cubic-bezier(.2,.8,.3,1) forwards}
+  @keyframes floatup{0%{opacity:0;transform:translate(-50%,0) scale(.5)}15%{opacity:1;transform:translate(-50%,-20px) scale(1.2)}100%{opacity:0;transform:translate(-50%,-140px) scale(1)}}
+
+  /* 重置確認 */
+  .modal-bg{position:fixed;inset:0;background:rgba(15,10,8,.6);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;backdrop-filter:blur(2px)}
+  .modal-bg.show{display:flex}
+  .modal{width:100%;max-width:360px;background:var(--paper);border:3px solid var(--line);border-radius:24px;box-shadow:6px 6px 0 var(--shadow-c);padding:22px 20px 20px;text-align:center;animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+  .modal.wobble{animation:wobble .5s}
+  @keyframes wobble{0%{transform:rotate(0)}25%{transform:rotate(-4deg) scale(1.03)}50%{transform:rotate(3deg)}75%{transform:rotate(-2deg)}100%{transform:none}}
+  .steps{display:flex;justify-content:center;gap:8px;margin-bottom:6px}
+  .steps i{width:28px;height:8px;border-radius:99px;border:2px solid var(--line);background:var(--field)}
+  .steps i.on{background:var(--primary)}
+  .modal h2{font-size:22px;font-weight:800;margin:4px 0 8px}
+  .modal p{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:18px}
+  .modal p b{color:var(--text)}
+  .modal .row{display:flex;gap:10px}
+  .modal .row .btn{flex:1;padding:13px 8px;font-size:16px}
+  .btn-safe{background:var(--c1)}
+  .btn-danger{background:var(--field);color:var(--primary)}
+  .btn-danger.lv2{background:var(--c3);color:var(--on-accent)}
+  .btn-danger.lv3{background:var(--primary);color:#fff}
+
+  /* 偷偷告訴你 */
+  .secret{position:relative;padding-top:26px}
+  .psst{position:absolute;top:-18px;right:22px;background:var(--c3);color:var(--on-accent);border:2.5px solid var(--line);border-radius:14px;padding:4px 12px;font-weight:800;font-size:15px;transform:rotate(8deg);box-shadow:2px 2px 0 var(--shadow-c);animation:psst 1.2s ease-in-out infinite}
+  @keyframes psst{0%,100%{transform:rotate(8deg)}50%{transform:rotate(-2deg) scale(1.08)}}
+  .secret p{margin-bottom:6px}
+  .s-amount{font-family:var(--num);font-weight:900;font-size:40px;line-height:1.15;color:var(--primary);-webkit-text-stroke:5px var(--line);paint-order:stroke fill;letter-spacing:1px;text-shadow:3px 3px 0 var(--line);margin:4px 0}
+  .s-amount small{font-size:20px;margin-right:4px;vertical-align:5px}
+  .secret .s-tail{margin-bottom:18px}
+  .secret .btn-primary{font-size:18px;padding:14px}
+
+  /* =========================================================
+     角落配色切換器
+     ========================================================= */
+  .theme-wrap{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+  .theme-fab{width:56px;height:56px;border-radius:50%;border:3px solid var(--line);background:var(--paper);box-shadow:3px 3px 0 var(--shadow-c);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s, background-color .35s}
+  .theme-fab:hover{transform:rotate(-12deg) scale(1.05)}
+  .theme-fab:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--shadow-c)}
+  .theme-fab svg{width:32px;height:32px}
+  .theme-pop{width:272px;background:var(--paper);border:3px solid var(--line);border-radius:20px;box-shadow:5px 5px 0 var(--shadow-c);padding:16px;transform-origin:100% 100%;animation:popIn .3s cubic-bezier(.2,1.6,.4,1)}
+  .theme-pop[hidden]{display:none}
+  @keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .tp-title{font-weight:800;font-size:16px;margin-bottom:2px}
+  .tp-sub{font-size:12px;color:var(--muted);margin-bottom:12px}
+  .swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+  .sw{background:transparent;border:0;font:inherit;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 0;border-radius:12px}
+  .sw-dot{width:46px;height:46px;border-radius:50%;border:3px solid var(--line);overflow:hidden;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;transform:rotate(-20deg);transition:transform .2s, box-shadow .2s}
+  .sw:hover .sw-dot{transform:rotate(0) scale(1.08)}
+  .sw-dot i:first-child{grid-row:span 2}
+  .sw.on .sw-dot{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--line)}
+  .sw.on span{color:var(--primary)}
+  .scheme{display:flex;background:var(--bg);border:2.5px solid var(--line);border-radius:999px;padding:3px}
+  .scheme button{flex:1;border:0;background:transparent;font:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:7px 4px;border-radius:999px;cursor:pointer;transition:.2s}
+  .scheme button.on{background:var(--text);color:var(--paper)}
+
+  @media (max-width:380px){
+    h1{font-size:26px}
+    .total{font-size:38px}
+    .btn-big{font-size:19px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 角色模板 -->
+  <template id="buddyTpl">
+    <svg class="buddy" data-mood="tired" viewBox="0 0 180 180" aria-hidden="true">
+      <ellipse cx="90" cy="167" rx="52" ry="6" fill="rgba(0,0,0,.18)"/>
+
+      <!-- 頭上的小烏雲（累 / 陣亡） -->
+      <g class="x t-tired t-dead">
+        <g class="cloud-g">
+          <g stroke="#5aaef0" stroke-width="3" stroke-linecap="round">
+            <line class="drop" x1="50" y1="34" x2="48" y2="40"/>
+            <line class="drop" x1="63" y1="36" x2="61" y2="42"/>
+            <line class="drop" x1="76" y1="34" x2="74" y2="40"/>
+          </g>
+          <path d="M42 30 Q31 30 33 21 Q34 13 43 15 Q47 4 61 7 Q71 1 79 10 Q91 10 88 21 Q90 30 80 30 Z" fill="#c4c9d4" stroke="#2b2118" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M48 20 Q52 17 56 20" fill="none" stroke="#2b2118" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+        </g>
+      </g>
+
+      <!-- 手：垂下 -->
+      <g class="x t-tired t-smug t-dead" fill="none" stroke="#2b2118" stroke-width="4.5" stroke-linecap="round">
+        <path d="M44 108 Q28 124 34 144"/>
+        <path d="M136 108 Q151 118 148 132"/>
+      </g>
+      <!-- 手：舉起（開心 / 驚慌） -->
+      <g class="x t-happy t-panic">
+        <path d="M44 104 Q26 92 30 72" fill="none" stroke="#2b2118" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M136 104 Q154 92 150 72" fill="none" stroke="#2b2118" stroke-width="4.5" stroke-linecap="round"/>
+        <circle class="b-hand" cx="30" cy="70" r="6" stroke="#2b2118" stroke-width="3.5"/>
+        <circle class="b-hand" cx="150" cy="70" r="6" stroke="#2b2118" stroke-width="3.5"/>
+      </g>
+
+      <!-- 身體：被生活壓扁的豆腐 -->
+      <path class="b-body" d="M52 52 Q90 44 128 52 Q140 54 140 70 L144 140 Q145 158 126 158 L54 158 Q35 158 36 140 L40 70 Q40 54 52 52 Z" stroke="#2b2118" stroke-width="4" stroke-linejoin="round"/>
+
+      <!-- 稀疏又塌掉的頭髮 -->
+      <g fill="none" stroke="#2b2118" stroke-linecap="round">
+        <path d="M92 49 C90 34 102 26 110 30 C116 34 114 42 107 42" stroke-width="3.5"/>
+        <path d="M78 50 Q74 43 79 37" stroke-width="3"/>
+        <path d="M104 50 Q108 45 105 41" stroke-width="2.2"/>
+      </g>
+
+      <!-- OK 繃 -->
+      <g transform="rotate(-25 58 66)">
+        <rect x="46" y="61" width="24" height="10" rx="5" fill="#ffd8a8" stroke="#2b2118" stroke-width="2.5"/>
+        <rect x="54" y="62.5" width="8" height="7" fill="#f2b67a"/>
+      </g>
+
+      <!-- 額頭陰沉線 -->
+      <g class="x t-tired t-dead t-panic" stroke="#7c8cff" stroke-width="2.6" stroke-linecap="round" opacity=".75">
+        <line x1="80" y1="58" x2="80" y2="70"/>
+        <line x1="88" y1="57" x2="88" y2="73"/>
+        <line x1="96" y1="57" x2="96" y2="70"/>
+        <line x1="104" y1="58" x2="104" y2="72"/>
+      </g>
+
+      <!-- 黑眼圈（永久，開心也有） -->
+      <g fill="none" stroke="#a597c4" stroke-linecap="round">
+        <path d="M60 101 Q70 107 80 101" stroke-width="3"/>
+        <path d="M100 101 Q110 107 120 101" stroke-width="3"/>
+        <path d="M63 106 Q70 110 77 106" stroke-width="2" opacity=".6"/>
+        <path d="M103 106 Q110 110 117 106" stroke-width="2" opacity=".6"/>
+      </g>
+
+      <!-- 臉紅 -->
+      <g class="x t-happy t-smug" fill="#ffb5c2">
+        <ellipse cx="54" cy="110" rx="8" ry="4.5"/><ellipse cx="126" cy="110" rx="8" ry="4.5"/>
+      </g>
+
+      <!-- 鬍渣 -->
+      <g fill="#2b2118" opacity=".5">
+        <circle cx="76" cy="125" r="1.3"/><circle cx="82" cy="128" r="1.3"/><circle cx="88" cy="129" r="1.3"/>
+        <circle cx="94" cy="129" r="1.3"/><circle cx="100" cy="127" r="1.3"/><circle cx="106" cy="124" r="1.3"/>
+        <circle cx="79" cy="122" r="1.1"/><circle cx="103" cy="121" r="1.1"/>
+      </g>
+
+      <!-- 領子 + 歪掉的領帶 -->
+      <g stroke="#2b2118" stroke-width="3" stroke-linejoin="round">
+        <path d="M68 132 L90 139 L82 148 Z" fill="#fff"/>
+        <path d="M112 132 L90 139 L98 148 Z" fill="#fff"/>
+        <g transform="rotate(14 90 140)">
+          <path class="tie" d="M84 137 L96 137 L94 145 L86 145 Z"/>
+          <path class="tie" d="M86 145 L94 145 L98 156 L90 162 L82 156 Z"/>
+        </g>
+      </g>
+
+      <!-- 咖啡漬 -->
+      <path d="M114 142 q6 -4 10 0 q4 4 0 7 q-3 3 -7 1 q-6 -1 -3 -8z" fill="#b98a5e" opacity=".75"/>
+      <circle cx="128" cy="152" r="1.8" fill="#b98a5e" opacity=".75"/>
+
+      <!-- 續命咖啡（累） -->
+      <g class="x t-tired">
+        <path class="steam" d="M149 120 Q145 115 149 110 Q152 106 149 101" fill="none" stroke="#b0a69a" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="140" y="124" width="18" height="21" rx="3" fill="#fff" stroke="#2b2118" stroke-width="3"/>
+        <path d="M158 128 Q166 131 158 139" fill="none" stroke="#2b2118" stroke-width="3"/>
+        <rect x="140" y="131" width="18" height="6" fill="#c08552" opacity=".85"/>
+      </g>
+
+      <!-- ===== 表情 ===== -->
+      <!-- 累 -->
+      <g class="x t-tired" stroke="#2b2118" stroke-width="4" stroke-linecap="round" fill="none">
+        <path d="M59 81 L77 76"/><path d="M103 76 L121 81"/>
+        <path d="M60 90 L80 90"/><path d="M100 90 L120 90"/>
+        <path d="M63 90 Q70 97 77 90 Z" fill="#2b2118"/>
+        <path d="M103 90 Q110 97 117 90 Z" fill="#2b2118"/>
+        <path d="M78 117 Q84 112 90 116 Q96 120 102 115"/>
+      </g>
+      <!-- 開心（但還是很累） -->
+      <g class="x t-happy" stroke="#2b2118" stroke-width="4" stroke-linecap="round" fill="none">
+        <path d="M60 94 Q70 82 80 94"/><path d="M100 94 Q110 82 120 94"/>
+        <path d="M76 110 Q90 128 104 110 Z" fill="#ff6b5b"/>
+      </g>
+      <g class="x t-happy" fill="#7cc6fe" stroke="#2b2118" stroke-width="2.2">
+        <path class="tear" d="M57 95 q-4 6 0 9 q4 -3 0 -9z"/>
+        <path class="tear" d="M123 95 q-4 6 0 9 q4 -3 0 -9z"/>
+      </g>
+      <!-- 得意 -->
+      <g class="x t-smug" stroke="#2b2118" stroke-width="4" stroke-linecap="round" fill="none">
+        <path d="M60 89 L80 91"/><path d="M100 91 L120 89"/>
+        <circle cx="70" cy="95" r="3.2" fill="#2b2118"/><circle cx="110" cy="95" r="3.2" fill="#2b2118"/>
+        <path d="M78 117 Q92 121 102 111"/>
+      </g>
+      <!-- 驚慌 -->
+      <g class="x t-panic" stroke="#2b2118" stroke-width="4" stroke-linecap="round">
+        <path d="M58 76 L76 80" fill="none"/><path d="M122 76 L104 80" fill="none"/>
+        <circle cx="70" cy="91" r="10" fill="#fff"/><circle cx="110" cy="91" r="10" fill="#fff"/>
+        <circle cx="70" cy="92" r="2.5" fill="#2b2118"/><circle cx="110" cy="92" r="2.5" fill="#2b2118"/>
+        <path d="M80 122 Q80 108 90 108 Q100 108 100 122 Q95 118 90 122 Q85 118 80 122 Z" fill="#2b2118"/>
+      </g>
+      <g class="x t-panic" fill="#7cc6fe" stroke="#2b2118" stroke-width="2.5">
+        <path class="sweat" d="M140 60 Q146 70 140 74 Q134 70 140 60 Z"/>
+        <path class="sweat s2" d="M42 70 Q47 78 42 82 Q37 78 42 70 Z"/>
+      </g>
+      <!-- 陣亡 -->
+      <g class="x t-dead" stroke="#2b2118" stroke-width="4" stroke-linecap="round" fill="none">
+        <path d="M62 84 L78 98 M78 84 L62 98"/><path d="M102 84 L118 98 M118 84 L102 98"/>
+        <path d="M78 117 Q84 113 90 117 Q96 121 102 117"/>
+      </g>
+      <g class="x t-dead">
+        <g class="soul">
+          <path d="M84 116 q0 -16 12 -16 q12 0 12 16 l0 10 l-4 -3 l-4 3 l-4 -3 l-4 3 l-4 -3 l-4 3 z" fill="#fff" stroke="#2b2118" stroke-width="2.5" stroke-linejoin="round" opacity=".92"/>
+          <circle cx="92" cy="110" r="1.8" fill="#2b2118"/><circle cx="100" cy="110" r="1.8" fill="#2b2118"/>
+        </g>
+      </g>
+    </svg>
+  </template>
+
+  <!-- ========== 起始設定 ========== -->
+  <section class="screen" id="setup">
+    <div class="slot" data-buddy data-mood="tired"></div>
+    <h1>活著就有<span class="hl">薪水</span><br>撐過一天就<span class="hl">記一筆</span></h1>
+    <p class="sub">打工人的每日小確幸存錢筒。<br>先告訴我，你每撐過一天值多少錢？</p>
+
+    <form class="card" id="setupForm" novalidate>
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab on" data-mode="daily" role="tab">直接填日薪</button>
+        <button type="button" class="tab" data-mode="monthly" role="tab">用月薪換算</button>
+      </div>
+      <label class="lbl" for="amount" id="amountLabel">每日累計金額</label>
+      <div class="money-input" id="moneyBox">
+        <span>NT$</span>
+        <input id="amount" type="number" inputmode="decimal" min="0" step="any" placeholder="1500" autocomplete="off">
+      </div>
+      <p class="hint" id="hint">小提示：可以填真實日薪，也可以填「今天想犒賞自己的金額」。</p>
+      <button class="btn btn-next" type="submit">下一步，開始苟活 →</button>
+    </form>
+    <p class="footer-note">資料只存在你這台裝置的瀏覽器裡，不會上傳到任何地方。</p>
+  </section>
+
+  <!-- ========== 主畫面 ========== -->
+  <section class="screen" id="main">
+    <div class="topbar">
+      <span class="badge" id="dayBadge">存活第 0 天</span>
+      <span class="badge alt" id="dateBadge">—</span>
+    </div>
+
+    <div class="stage" title="戳我">
+      <div class="bubble" id="bubble">今天也辛苦了…</div>
+      <div class="slot" data-buddy data-mood="tired" data-small></div>
+    </div>
+
+    <div class="card total-card">
+      <span class="tag">💰 累積的小確幸</span>
+      <div class="total" id="total"><small>NT$</small>0</div>
+      <div class="daily">每活過一天 <b id="dailyText">+NT$0</b></div>
+      <div class="eq-head">
+        <span>💸 這些錢可以換成…</span>
+        <button class="roll" id="rollBtn" type="button"><span class="dice">🎲</span>換一組</button>
+      </div>
+      <div class="equiv" id="equiv">
+        <div class="slot-box"></div><div class="slot-box"></div><div class="slot-box"></div>
+      </div>
+      <div class="eq-note">＊價格為大約估算，僅供自我安慰</div>
+    </div>
+
+    <button class="btn btn-primary btn-big" id="claimBtn">🎉 恭喜自己！又活過一天！</button>
+    <div class="status" id="status"></div>
+
+    <button class="btn-ghost" id="resetBtn">↺ 重新設定（reset）</button>
+    <p class="footer-note">每天傍晚 6 點刷新，一天只能按一次。<br>資料存在這台裝置的瀏覽器，清除瀏覽資料就會不見喔。</p>
+  </section>
+</div>
+
+<!-- 角落配色切換 -->
+<div class="theme-wrap">
+  <div class="theme-pop" id="themePop" hidden>
+    <div class="tp-title">換個顏色換個心情</div>
+    <div class="tp-sub">雖然上班還是一樣累 🫠</div>
+    <div class="swatches" id="swatches"></div>
+    <div class="scheme" id="scheme">
+      <button data-s="light">☀️ 亮色</button>
+      <button data-s="dark">🌙 深色</button>
+      <button data-s="auto">🖥️ 自動</button>
+    </div>
+  </div>
+  <button class="theme-fab" id="themeFab" aria-label="切換配色" aria-expanded="false">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M20 4 C9 4 4 12 4 20 C4 29 11 36 19 36 C23 36 24 33 22 30 C20 27 22 25 25 25 L29 25 C33 25 36 22 36 18 C36 10 29 4 20 4 Z" fill="var(--paper)" stroke="var(--line)" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="12" cy="18" r="3.4" fill="var(--primary)" stroke="var(--line)" stroke-width="1.5"/>
+      <circle cx="17" cy="11" r="3.4" fill="var(--accent)" stroke="var(--line)" stroke-width="1.5"/>
+      <circle cx="26" cy="11" r="3.4" fill="var(--c1)" stroke="var(--line)" stroke-width="1.5"/>
+      <circle cx="29" cy="18" r="3" fill="var(--c2)" stroke="var(--line)" stroke-width="1.5"/>
+    </svg>
+  </button>
+</div>
+
+<!-- 特效層 -->
+<div class="fx" id="fx"></div>
+
+<!-- 偷偷告訴你 -->
+<div class="modal-bg" id="secretBg" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="modal secret">
+    <div class="psst">噓～</div>
+    <div class="slot" data-buddy data-mood="smug" data-small></div>
+    <h2 id="sTitle">偷偷告訴你～</h2>
+    <p>從 11/9 到昨天，你已經默默撐了 <b id="sDays">0</b> 天<br>目前已經累積</p>
+    <div class="s-amount"><small>NT$</small><span id="sAmount">0</span></div>
+    <p class="s-tail">元囉，開心點吧 😏</p>
+    <button class="btn btn-primary" id="sOk">嘿嘿，收下了！</button>
+  </div>
+</div>
+
+<!-- 重置確認 -->
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal" id="modal">
+    <div class="steps"><i></i><i></i><i></i></div>
+    <div class="slot" data-buddy data-mood="panic" data-small></div>
+    <h2 id="mTitle">確定要重來嗎？</h2>
+    <p id="mText"></p>
+    <div class="row">
+      <button class="btn btn-safe" id="mCancel">算了算了</button>
+      <button class="btn btn-danger" id="mOk">確定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const KEY = 'survive-salary-v1';
+  const THEME_KEY = 'survive-salary-theme';
+  const RESET_HOUR = 18;
+  const WORKDAYS = 30;
+  const START = new Date(2026, 10, 9); // 2026/11/9 起計
+  const EQUIV_KEY = 'survive-salary-equiv';
+  // 換算清單：price 可以是數字或 (每日金額) => 數字
+  const ITEMS = [
+    { id: 'tea',     ico: '🧋', unit: '杯', name: '珍奶',         price: 65 },
+    { id: 'bento',   ico: '🍱', unit: '個', name: '便當',         price: 100 },
+    { id: 'game',    ico: '🎮', unit: '款', name: '遊戲',         price: 1290 },
+    { id: 'chicken', ico: '🍗', unit: '片', name: '大雞排',       price: 90 },
+    { id: 'latte',   ico: '☕', unit: '杯', name: '超商拿鐵',     price: 60 },
+    { id: 'icecream',ico: '🍦', unit: '支', name: '超商霜淇淋',   price: 39 },
+    { id: 'bun',     ico: '🍞', unit: '個', name: '菠蘿麵包',     price: 35 },
+    { id: 'sushi',   ico: '🍣', unit: '盤', name: '迴轉壽司',     price: 40 },
+    { id: 'burger',  ico: '🍔', unit: '份', name: '速食套餐',     price: 170 },
+    { id: 'ramen',   ico: '🍜', unit: '碗', name: '日式拉麵',     price: 280 },
+    { id: 'beer',    ico: '🍺', unit: '罐', name: '冰啤酒',       price: 45 },
+    { id: 'pizza',   ico: '🍕', unit: '個', name: '大披薩',       price: 450 },
+    { id: 'brunch',  ico: '🥞', unit: '份', name: '早午餐',       price: 220 },
+    { id: 'hotpot',  ico: '🍲', unit: '次', name: '火鍋吃到飽',   price: 750 },
+    { id: 'steak',   ico: '🥩', unit: '客', name: '牛排大餐',     price: 1200 },
+    { id: 'movie',   ico: '🎬', unit: '張', name: '電影票',       price: 330 },
+    { id: 'ktv',     ico: '🎤', unit: '次', name: 'KTV 歡唱',    price: 500 },
+    { id: 'stream',  ico: '📺', unit: '個月', name: '影音串流',   price: 390 },
+    { id: 'massage', ico: '💆', unit: '小時', name: '按摩',       price: 1000 },
+    { id: 'haircut', ico: '💇', unit: '次', name: '剪頭髮',       price: 400 },
+    { id: 'gas',     ico: '⛽', unit: '次', name: '機車加滿油',   price: 150 },
+    { id: 'catfood', ico: '🐱', unit: '個', name: '貓罐罐',       price: 35 },
+    { id: 'concert', ico: '🎟️', unit: '張', name: '演唱會門票',   price: 3800 },
+    { id: 'onsen',   ico: '♨️', unit: '晚', name: '溫泉旅館',     price: 4500 },
+    { id: 'japan',   ico: '✈️', unit: '趟', name: '日本來回機票', price: 12000 },
+    { id: 'phone',   ico: '📱', unit: '支', name: '旗艦手機',     price: 35000 },
+    // ---- 網路梗區 ----
+    { id: 'gacha',   ico: '💎', unit: '單', name: '課金抽一單',     price: 3290 },
+    { id: 'nails',   ico: '💅', unit: '次', name: '美甲',           price: 1200 },
+    { id: 'claw',    ico: '🕹️', unit: '次', name: '夾娃娃（夾不到）', price: 10 },
+    { id: 'ichiban', ico: '🎁', unit: '抽', name: '一番賞',         price: 350 },
+    { id: 'blind',   ico: '🧸', unit: '個', name: '盲盒（沒隱藏版）', price: 350 },
+    { id: 'shark',   ico: '🦈', unit: '隻', name: '鯊鯊娃娃',       price: 700 },
+    { id: 'tile',    ico: '🏠', unit: '塊', name: '台北房子的地磚', price: 22000 },
+    { id: 'egg',     ico: '🥚', unit: '顆', name: '雞蛋（蛋荒價）', price: 9 },
+    { id: 'noodle',  ico: '🍜', unit: '包', name: '月底泡麵',       price: 25 },
+    { id: 'rice',    ico: '🍚', unit: '碗', name: '滷肉飯',         price: 40 },
+    { id: 'delivery',ico: '🛵', unit: '次', name: '外送（含外送費）', price: 260 },
+    { id: 'taxi',    ico: '🚕', unit: '趟', name: '累到叫小黃回家', price: 250 },
+    { id: 'gym',     ico: '🏋️', unit: '個月', name: '健身房（只去一次）', price: 1200 },
+    { id: 'books',   ico: '📚', unit: '本', name: '買了不會看的書', price: 380 },
+    { id: 'keyboard',ico: '⌨️', unit: '把', name: '第五把機械鍵盤', price: 3000 },
+    { id: 'redenv',  ico: '🧧', unit: '包', name: '同事喜酒紅包',   price: 2000 },
+    { id: 'lamp',    ico: '🏮', unit: '盞', name: '光明燈（求升官）', price: 600 },
+    { id: 'lotto',   ico: '🎱', unit: '張', name: '大樂透（買個夢）', price: 50 },
+    { id: 'shrimp',  ico: '🦐', unit: '小時', name: '釣蝦',         price: 400 },
+    { id: 'cake',    ico: '🎂', unit: '個', name: '一個人的生日蛋糕', price: 650 },
+    { id: 'flower',  ico: '💐', unit: '束', name: '送自己的花',     price: 1200 },
+    { id: 'quit',    ico: '🚪', unit: '份', name: '離職緩衝金（半年）', price: d => d * 180 },
+    { id: 'lego',    ico: '🧱', unit: '盒', name: '積木盒',       price: 2500 },
+    { id: 'leave',   ico: '🏖️', unit: '天', name: '特休（理論上）', price: d => d },
+    { id: 'life',    ico: '⏰', unit: '小時', name: '被買走的人生', price: d => d / 8 },
+  ];
+  const byId = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+  const priceOf = (it, daily) => typeof it.price === 'function' ? it.price(daily) : it.price;
+  const qty = (it, total, daily) => {
+    const n = total / priceOf(it, daily);
+    if (n >= 10) return fmt(Math.floor(n));
+    return fmt(Math.floor(n * 10) / 10);
+  };
+
+  /* ---------- storage（容錯） ---------- */
+  const mem = {};
+  const getJSON = k => { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : (mem[k] ?? null); } catch { return mem[k] ?? null; } };
+  const setJSON = (k, v) => { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const delKey = k => { delete mem[k]; try { localStorage.removeItem(k); } catch {} };
+  const load = () => getJSON(KEY);
+  const save = s => setJSON(KEY, s);
+  const wipe = () => delKey(KEY);
+
+  /* ---------- 時間：每天 18:00 為一個週期 ---------- */
+  const pad = n => String(n).padStart(2, '0');
+  const cycleKey = (d = new Date()) => {
+    const s = new Date(d.getTime() - RESET_HOUR * 3600e3);
+    return `${s.getFullYear()}-${pad(s.getMonth() + 1)}-${pad(s.getDate())}`;
+  };
+  const dateKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+  // 下一次可以按的時間：最後領取那天的「隔天晚上 6 點」
+  const nextClaimAt = s => {
+    if (!s.last) return new Date();
+    const n = parseKey(s.last); n.setDate(n.getDate() + 1); n.setHours(RESET_HOUR, 0, 0, 0);
+    return n;
+  };
+
+  const $ = s => document.querySelector(s);
+  const fmt = n => Number(n).toLocaleString('zh-TW', { maximumFractionDigits: 2 });
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  /* ---------- 角色 ---------- */
+  const tpl = $('#buddyTpl');
+  document.querySelectorAll('[data-buddy]').forEach(slot => {
+    const svg = tpl.content.firstElementChild.cloneNode(true);
+    svg.dataset.mood = slot.dataset.mood || 'tired';
+    if ('small' in slot.dataset) svg.classList.add('small');
+    slot.appendChild(svg);
+  });
+  const setMood = (scope, mood) => { const b = $(scope + ' .buddy'); if (b) b.dataset.mood = mood; };
+  const buddyAnim = (scope, cls, ms = 700) => {
+    const b = $(scope + ' .buddy'); if (!b) return;
+    b.classList.remove('jump', 'shake'); void b.offsetWidth; b.classList.add(cls);
+    if (ms) setTimeout(() => b.classList.remove(cls), ms);
+  };
+  const say = text => {
+    const b = $('#bubble'); b.textContent = text;
+    b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+  };
+
+  /* ---------- 文案 ---------- */
+  const LINES_WAIT = [
+    '今天也辛苦了…快按下去領薪水吧',
+    '撐到現在的你，值得一個按鈕',
+    '會議開完了嗎？開完就來按',
+    '電量剩 3%，需要按鈕充電',
+    '今日份的薪水正在等你認領',
+    '咖啡續到第三杯了，靈魂還沒到',
+    '頭上這朵雲，跟著我三年了',
+  ];
+  const LINES_DONE = [
+    '又活過一天！人類奇蹟！',
+    '錢錢入袋，靈魂暫時歸位',
+    '今天的你，比咖啡還要撐得住',
+    '老闆的夢想又多實現了一天，你的也是',
+    '恭喜解鎖成就：準時（或不準時）下班',
+    '撐住就是贏，躺平明天再說',
+    '這筆錢是用加班換來的，請珍惜',
+    '今天的 KPI：活著 ✓',
+    '黑眼圈還在，但錢也在了',
+  ];
+  // 週末（正職月薪，放假照領）
+  const LINES_WEEKEND_WAIT = [
+    '放假也有薪水，正職的尊嚴就在這',
+    '躺著也能領，快按下去',
+    '今天不用上班，但薪水照樣上班',
+    '假日份薪水已送達，請簽收',
+    '在沙發上按一下就有錢，爽吧',
+  ];
+  const LINES_WEEKEND_DONE = [
+    '矮油不錯喔，放假多賺一點！',
+    '水啦～假日薪水 get！',
+    '躺著也能賺，這就是正職的浪漫',
+    '老闆在加班，你在領薪水，讚',
+    '放假還有錢拿，今天的你贏了',
+    '週末薪水入帳，耍廢有理',
+    '沒進公司也算活過一天，合理',
+    '假日也領薪，不要跟別人說（偷笑）',
+  ];
+  const LINES_CLAIMED = [
+    '今天已經領過囉，乖乖休息',
+    '再按也不會多給啦，明天再來',
+    '去吃頓好的吧，今天辛苦了',
+    '傍晚 6 點後再來找我',
+    '戳我也沒用，我也想下班',
+  ];
+  const LINES_THEME = [
+    '換了顏色，班還是要上…',
+    '嗯，這個顏色比較不想死',
+    '心情有好一點點（0.3%）',
+    '新衣服！但黑眼圈還在',
+  ];
+  const MILESTONE = { 5: '連續苟活 5 天！一週達成！', 22: '撐滿一個月份的工作天！', 30: '30 天！你是活化石級打工人', 100: '100 天！請收下我的膝蓋', 365: '一整年！你根本是傳說' };
+
+  const show = id => {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $('#' + id).classList.add('active');
+  };
+
+  /* ---------- 設定頁 ---------- */
+  let mode = 'daily';
+  const amountEl = $('#amount'), hintEl = $('#hint');
+  const updateHint = () => {
+    const v = parseFloat(amountEl.value);
+    if (mode === 'monthly') {
+      hintEl.innerHTML = v > 0
+        ? `月薪 NT$${fmt(v)} ÷ ${WORKDAYS} 天 ≈ 每天 <b>NT$${fmt(Math.round(v / WORKDAYS))}</b>`
+        : `會用月薪 ÷ ${WORKDAYS} 天幫你換算日薪。`;
+    } else {
+      hintEl.innerHTML = v > 0
+        ? `每撐過一天，就幫你記上 <b>NT$${fmt(v)}</b> 🎉`
+        : '小提示：可以填真實日薪，也可以填「今天想犒賞自己的金額」。';
+    }
+  };
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+    mode = t.dataset.mode;
+    $('#amountLabel').textContent = mode === 'monthly' ? '你的月薪' : '每日累計金額';
+    amountEl.placeholder = mode === 'monthly' ? '35000' : '1500';
+    updateHint(); amountEl.focus();
+  }));
+  amountEl.addEventListener('input', () => {
+    updateHint();
+    setMood('#setup', parseFloat(amountEl.value) > 0 ? 'smug' : 'tired');
+  });
+
+  $('#setupForm').addEventListener('submit', e => {
+    e.preventDefault();
+    let v = parseFloat(amountEl.value);
+    if (!(v > 0) || !isFinite(v)) {
+      const box = $('#moneyBox');
+      box.classList.remove('shakeit'); void box.offsetWidth; box.classList.add('shakeit');
+      hintEl.innerHTML = '<b>欸～至少要填一個大於 0 的數字啦</b>';
+      setMood('#setup', 'panic'); buddyAnim('#setup', 'shake', 500);
+      setTimeout(() => setMood('#setup', 'tired'), 1400);
+      return;
+    }
+    if (mode === 'monthly') v = Math.round(v / WORKDAYS);
+    v = Math.round(v * 100) / 100;
+    // 從 START 起算，已經過了晚上 6 點的天數都算進去
+    // 從 START 算到「昨天」，今天留給使用者自己按
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const days = Math.max(0, Math.round((today - START) / 864e5));
+    const total = Math.round(days * v * 100) / 100;
+    const yest = new Date(today); yest.setDate(yest.getDate() - 1);
+    save({ daily: v, total, days, last: days > 0 ? dateKey(yest) : null, early: dateKey(today), created: Date.now() });
+    amountEl.value = ''; setMood('#setup', 'tired'); updateHint();
+    renderMain(true);
+    paintTotal(0);
+    show('main');
+    if (days > 0) openSecret(days, total);
+    else countUp(0, total);
+  });
+
+  /* ---------- 主畫面 ---------- */
+  const totalEl = $('#total');
+  const paintTotal = n => { totalEl.innerHTML = `<small>NT$</small>${fmt(Math.round(n * 100) / 100)}`; };
+  const countUp = (from, to, ms = 1200) => {
+    const t0 = performance.now();
+    const step = t => {
+      const p = Math.min(1, (t - t0) / ms);
+      paintTotal(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  // 這次按下去代表哪一天；回傳 null 表示今天已經領過
+  const claimTarget = s => {
+    if (!s) return null;
+    const ck = cycleKey();
+    if (!s.last || ck > s.last) return ck;
+    // 設定當天傍晚 6 點前，也能先領「今天」
+    const tk = dateKey(new Date());
+    if (s.early === tk && s.last < tk) return tk;
+    return null;
+  };
+  const claimedToday = s => !!s && claimTarget(s) === null;
+  const isWeekendKey = k => { const d = parseKey(k).getDay(); return d === 0 || d === 6; };
+  // 待領的天數：上次領到哪天 → 這次目標日（中間沒按的天數一起補）
+  const pendingDays = s => {
+    const t = claimTarget(s); if (!t) return [];
+    if (!s.last) return [t];
+    const out = [], d = parseKey(s.last);
+    while (true) { d.setDate(d.getDate() + 1); const k = dateKey(d); out.push(k); if (k >= t || out.length > 3660) break; }
+    return out;
+  };
+
+  function renderMain(fresh = false) {
+    const s = load(); if (!s) return;
+    $('#dayBadge').textContent = `存活第 ${s.days} 天`;
+    const now = new Date();
+    $('#dateBadge').textContent = `${now.getMonth() + 1}/${now.getDate()} 週${'日一二三四五六'[now.getDay()]}`;
+    $('#dailyText').textContent = `+NT$${fmt(s.daily)}`;
+    if (!rolling) renderEquiv(s);
+    if (fresh) paintTotal(s.total);
+    const done = claimedToday(s);
+    const btn = $('#claimBtn');
+    btn.disabled = done;
+    const target = claimTarget(s);
+    const wk = !!target && isWeekendKey(target);
+    const pend = pendingDays(s).length;
+    btn.textContent = done ? '✅ 今天已經活過了'
+      : pend > 1 ? `🎉 恭喜自己！一口氣領 ${pend} 天！`
+      : wk ? '🏖️ 假日也活過一天！薪水照領！' : '🎉 恭喜自己！又活過一天！';
+    if (fresh) {
+      $('#bubble').textContent = done ? pick(LINES_CLAIMED) : wk ? pick(LINES_WEEKEND_WAIT) : pick(LINES_WAIT);
+      setMood('#main', done ? 'happy' : wk ? 'smug' : 'tired');
+    }
+    tick();
+  }
+
+  function tick() {
+    const s = load(); if (!s) return;
+    const st = $('#status');
+    if (claimedToday(s)) {
+      const diff = Math.max(0, nextClaimAt(s) - new Date());
+      const h = Math.floor(diff / 3600e3), m = Math.floor(diff % 3600e3 / 60e3), sec = Math.floor(diff % 60e3 / 1e3);
+      st.innerHTML = `下一次可以按：<span class="clock">${pad(h)}:${pad(m)}:${pad(sec)}</span> 後`;
+    } else {
+      const n = pendingDays(s).length;
+      st.innerHTML = n > 1
+        ? `<span class="dot"></span>有 <b>${n}</b> 天薪水待認領（+NT$${fmt(n * s.daily)}）！`
+        : `<span class="dot"></span>今日份薪水待認領！`;
+    }
+  }
+  let lastCycle = cycleKey();
+  setInterval(() => {
+    tick();
+    const k = cycleKey();
+    if (k !== lastCycle) { lastCycle = k; if ($('#main').classList.contains('active')) renderMain(true); }
+  }, 1000);
+
+  $('#claimBtn').addEventListener('click', e => {
+    const s = load(); const target = claimTarget(s); if (!target) return;
+    const days = pendingDays(s), n = days.length;
+    const before = s.total, beforeDays = s.days;
+    const gain = Math.round(s.daily * n * 100) / 100;
+    s.total = Math.round((s.total + gain) * 100) / 100;
+    s.days += n;
+    s.last = target;
+    save(s);
+
+    const r = e.currentTarget.getBoundingClientRect();
+    floater(`+${fmt(gain)}`, r.left + r.width / 2, r.top);
+    coinRain();
+    setMood('#main', 'happy'); buddyAnim('#main', 'jump');
+    const ms = Object.keys(MILESTONE).map(Number).filter(m => m > beforeDays && m <= s.days).pop();
+    const missedWeekend = days.slice(0, -1).some(isWeekendKey);
+    let line;
+    if (ms) line = MILESTONE[ms];
+    else if (n > 1 && missedWeekend) line = pick([
+      `週末偷懶沒按？正職放假照領，${n} 天一次補給你！`,
+      `矮油～假日忘了按也沒差，${n} 天份一口氣入帳！`,
+      `水啦～連假日一起補，${n} 天薪水 get！`,
+    ]);
+    else if (n > 1) line = pick([
+      `你漏按了 ${n - 1} 天，幫你補回來了！`,
+      `前幾天太累忘了按？沒關係，${n} 天一次領`,
+    ]);
+    else line = isWeekendKey(target) ? pick(LINES_WEEKEND_DONE) : pick(LINES_DONE);
+    say(line);
+    countUp(before, s.total);
+    setTimeout(() => { totalEl.classList.remove('bump'); void totalEl.offsetWidth; totalEl.classList.add('bump'); }, 1150);
+    renderMain(false);
+  });
+
+  $('#main .stage').addEventListener('click', () => {
+    const s = load(); if (!s) return;
+    const t = claimTarget(s);
+    say(!t ? pick(LINES_CLAIMED) : isWeekendKey(t) ? pick(LINES_WEEKEND_WAIT) : pick(LINES_WAIT));
+    buddyAnim('#main', 'jump');
+  });
+
+  /* ---------- 特效 ---------- */
+  const fx = $('#fx');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function coinRain() {
+    if (reduce) return;
+    const cs = getComputedStyle(document.documentElement);
+    const colors = ['--primary', '--accent', '--c1', '--c2', '--c3'].map(v => cs.getPropertyValue(v).trim());
+    for (let i = 0; i < 26; i++) {
+      const c = document.createElement('div');
+      c.className = 'coin'; c.textContent = '$';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+      c.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+      c.style.animationDelay = (Math.random() * .6) + 's';
+      const sz = 28 + Math.random() * 16; c.style.width = c.style.height = sz + 'px';
+      fx.appendChild(c); setTimeout(() => c.remove(), 3800);
+    }
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.background = pick(colors);
+      c.style.setProperty('--r', (Math.random() * 1080) + 'deg');
+      c.style.animationDuration = (1.8 + Math.random() * 1.6) + 's';
+      c.style.animationDelay = (Math.random() * .8) + 's';
+      fx.appendChild(c); setTimeout(() => c.remove(), 4400);
+    }
+  }
+  function floater(text, x, y) {
+    const f = document.createElement('div');
+    f.className = 'floater'; f.textContent = text;
+    f.style.left = x + 'px'; f.style.top = (y - 10) + 'px';
+    document.body.appendChild(f); setTimeout(() => f.remove(), 1700);
+  }
+
+  /* ---------- 重置：確認三次 ---------- */
+  const modalBg = $('#modalBg'), modal = $('#modal');
+  let step = 0;
+  const STEPS = s => [
+    { t: '確定要重來嗎？', p: `你累積的 <b>NT$${fmt(s.total)}</b> 小確幸會全部歸零喔！`, ok: '確定', cancel: '算了算了', mood: 'panic', cls: '' },
+    { t: '真的真的確定？', p: `這可是你熬了 <b>${s.days} 天</b>才換來的耶…<br>你忍心嗎？`, ok: '我忍心', cancel: '我不忍心', mood: 'panic', cls: 'lv2' },
+    { t: '最後一次問你！', p: '按下去就回不去了，<br>跟週一早上一樣殘酷。', ok: '對，重來！', cancel: '我反悔了', mood: 'dead', cls: 'lv3' },
+  ];
+  function paintStep() {
+    const s = load() || { total: 0, days: 0 };
+    const d = STEPS(s)[step];
+    $('#mTitle').textContent = d.t;
+    $('#mText').innerHTML = d.p;
+    $('#mOk').textContent = d.ok;
+    $('#mCancel').textContent = d.cancel;
+    $('#mOk').className = 'btn btn-danger ' + d.cls;
+    document.querySelectorAll('.steps i').forEach((el, i) => el.classList.toggle('on', i <= step));
+    setMood('#modalBg', d.mood);
+    buddyAnim('#modalBg', 'shake', step === 2 ? 900 : 500);
+    modal.classList.remove('wobble'); void modal.offsetWidth; modal.classList.add('wobble');
+  }
+  const openModal = () => { step = 0; modalBg.classList.add('show'); paintStep(); $('#mCancel').focus(); };
+  const closeModal = () => modalBg.classList.remove('show');
+  $('#resetBtn').addEventListener('click', openModal);
+  $('#mCancel').addEventListener('click', () => {
+    closeModal();
+    say('呼～嚇死我了，還好你沒按');
+    setMood('#main', 'happy'); buddyAnim('#main', 'jump');
+  });
+  $('#mOk').addEventListener('click', () => {
+    if (step < 2) { step++; paintStep(); return; }
+    closeModal(); wipe();
+    show('setup'); amountEl.focus();
+  });
+  modalBg.addEventListener('click', e => { if (e.target === modalBg) $('#mCancel').click(); });
+
+  /* ---------- 換算拉霸 ---------- */
+  let current = (getJSON(EQUIV_KEY) || []).filter(id => byId[id]);
+  if (current.length !== 3) current = ['tea', 'bento', 'game'];
+  let rolling = false;
+  const boxes = [...document.querySelectorAll('#equiv .slot-box')];
+  const itemHTML = (it, s) =>
+    `<div class="eq-item"><span class="e-ico">${it.ico}</span><span>約 <b>${qty(it, s.total, s.daily)}</b> ${it.unit}</span>${nameHTML(it.name)}</div>`;
+  function nameHTML(n) {
+    const m = n.match(/^(.*?)（(.+)）$/);
+    return m ? `<span class="e-txt">${m[1]}</span><span class="e-sub">${m[2]}</span>` : `<span class="e-txt">${n}</span>`;
+  }
+  function renderEquiv(s) {
+    boxes.forEach((box, i) => { box.innerHTML = `<div class="strip">${itemHTML(byId[current[i]], s)}</div>`; });
+  }
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  $('#rollBtn').addEventListener('click', () => {
+    const s = load(); if (!s || rolling) return;
+    // 優先抽沒在畫面上的
+    const pool = shuffle(ITEMS.filter(it => !current.includes(it.id)));
+    const next = pool.slice(0, 3).map(it => it.id);
+    const btn = $('#rollBtn');
+    if (reduce) { current = next; setJSON(EQUIV_KEY, current); renderEquiv(s); return; }
+    rolling = true; btn.disabled = true; btn.classList.add('spin');
+    let done = 0;
+    boxes.forEach((box, i) => {
+      const filler = shuffle(ITEMS.slice()).slice(0, 10 + i * 4);
+      const seq = [byId[current[i]], ...filler, byId[next[i]]];
+      box.innerHTML = `<div class="strip">${seq.map(it => itemHTML(it, s)).join('')}</div>`;
+      box.classList.add('rolling'); box.classList.remove('landed');
+      const strip = box.firstElementChild;
+      const H = strip.firstElementChild.offsetHeight;
+      const dist = (seq.length - 1) * H;
+      const anim = strip.animate(
+        [{ transform: 'translateY(0)' }, { transform: `translateY(${-dist}px)` }],
+        { duration: 1100 + i * 450, easing: 'cubic-bezier(.12,.75,.25,1.04)', fill: 'forwards' }
+      );
+      anim.onfinish = () => {
+        box.classList.remove('rolling');
+        box.innerHTML = `<div class="strip">${itemHTML(byId[next[i]], s)}</div>`;
+        void box.offsetWidth; box.classList.add('landed');
+        if (++done === 3) {
+          current = next; setJSON(EQUIV_KEY, current);
+          rolling = false; btn.disabled = false; btn.classList.remove('spin');
+          say(pick(['拉霸結果出爐！先別急著花', '看到沒，你很有錢（大概）', '這些都是你撐出來的', '換算完，更想下班了']));
+        }
+      };
+    });
+  });
+
+  /* ---------- 偷偷告訴你 ---------- */
+  const secretBg = $('#secretBg');
+  let secretTotal = 0;
+  function openSecret(days, total) {
+    secretTotal = total;
+    $('#sDays').textContent = days;
+    secretBg.classList.add('show');
+    setMood('#secretBg', 'smug');
+    const el = $('#sAmount'), t0 = performance.now(), ms = 1400;
+    const step = t => {
+      const p = Math.min(1, (t - t0) / ms);
+      el.textContent = fmt(Math.round(total * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(step); else el.textContent = fmt(total);
+    };
+    requestAnimationFrame(step);
+    $('#sOk').focus();
+  }
+  $('#sOk').addEventListener('click', e => {
+    secretBg.classList.remove('show');
+    const r = e.currentTarget.getBoundingClientRect();
+    coinRain();
+    countUp(0, secretTotal, 1400);
+    setTimeout(() => { totalEl.classList.remove('bump'); void totalEl.offsetWidth; totalEl.classList.add('bump'); }, 1350);
+    setMood('#main', 'happy'); buddyAnim('#main', 'jump');
+    say('今天這份，要你自己親手按下去喔！');
+  });
+
+  /* ---------- 配色切換 ---------- */
+  const THEMES = [
+    { id: 'tomato', name: '番茄奶油', c: ['#ff6b5b', '#ffd23f', '#5fd3a8'] },
+    { id: 'mint',   name: '薄荷汽水', c: ['#12b886', '#ffe066', '#ff8787'] },
+    { id: 'grape',  name: '葡萄氣泡', c: ['#845ef7', '#ffd43b', '#63e6be'] },
+    { id: 'ocean',  name: '海鹽蘇打', c: ['#3a86ff', '#ffbe0b', '#ff7096'] },
+    { id: 'berry',  name: '草莓牛奶', c: ['#ff4d8d', '#ffd23f', '#91a7ff'] },
+    { id: 'lemon',  name: '檸檬加班', c: ['#ff8a00', '#c0eb75', '#4dabf7'] },
+  ];
+  const root = document.documentElement;
+  const darkMQ = matchMedia('(prefers-color-scheme: dark)');
+  let pref = Object.assign({ theme: 'tomato', scheme: 'auto' }, getJSON(THEME_KEY) || {});
+  if (!THEMES.some(t => t.id === pref.theme)) pref.theme = 'tomato';
+
+  const swWrap = $('#swatches');
+  THEMES.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'sw'; b.dataset.id = t.id; b.type = 'button';
+    b.innerHTML = `<div class="sw-dot">${t.c.map(c => `<i style="background:${c}"></i>`).join('')}</div><span>${t.name}</span>`;
+    swWrap.appendChild(b);
+  });
+
+  function applyTheme() {
+    const scheme = pref.scheme === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : pref.scheme;
+    root.dataset.theme = pref.theme;
+    root.dataset.scheme = scheme;
+    root.style.colorScheme = scheme;
+    swWrap.querySelectorAll('.sw').forEach(b => b.classList.toggle('on', b.dataset.id === pref.theme));
+    $('#scheme').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.s === pref.scheme));
+  }
+  const themeChanged = () => {
+    setJSON(THEME_KEY, pref); applyTheme();
+    if ($('#main').classList.contains('active')) { say(pick(LINES_THEME)); buddyAnim('#main', 'jump'); }
+  };
+  swWrap.addEventListener('click', e => {
+    const b = e.target.closest('.sw'); if (!b) return;
+    pref.theme = b.dataset.id; themeChanged();
+  });
+  $('#scheme').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    pref.scheme = b.dataset.s; themeChanged();
+  });
+  darkMQ.addEventListener?.('change', () => { if (pref.scheme === 'auto') applyTheme(); });
+
+  const pop = $('#themePop'), fab = $('#themeFab');
+  const togglePop = open => {
+    pop.hidden = !open; fab.setAttribute('aria-expanded', String(open));
+  };
+  fab.addEventListener('click', e => { e.stopPropagation(); togglePop(pop.hidden); });
+  document.addEventListener('click', e => { if (!pop.hidden && !e.target.closest('.theme-wrap')) togglePop(false); });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (modalBg.classList.contains('show')) $('#mCancel').click();
+    else togglePop(false);
+  });
+  applyTheme();
+
+  /* ---------- 啟動 ---------- */
+  if (load()) { renderMain(true); show('main'); }
+  else show('setup');
+})();
+</script>
+</body>
+</html>
