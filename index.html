@@ -1045,7 +1045,10 @@
     let waves = [], winds = [], clouds = [], shimmer = [], nextWind = 0;
     const rnd = (a, b) => a + Math.random() * (b - a);
     const hex = h => {
-      h = (h || '#888888').trim().replace('#', '');
+      h = (h || '#888888').trim();
+      const m = h.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (m) return [+m[1], +m[2], +m[3]];
+      h = h.replace('#', '');
       if (h.length === 3) h = h.split('').map(c => c + c).join('');
       const n = parseInt(h, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255];
     };
@@ -1202,21 +1205,10 @@
     function drawCloud(x, y, s) {
       const parts = [[0, 0, 20], [22, -12, 26], [48, -4, 22], [68, 4, 16], [30, 8, 20]];
       const shape = () => { ctx.beginPath(); parts.forEach(([dx, dy, r]) => { ctx.moveTo(x + (dx + r) * s, y + dy * s); ctx.arc(x + dx * s, y + dy * s, r * s, 0, Math.PI * 2); }); };
-      shape(); ctx.strokeStyle = rgba(P.line, .32); ctx.lineWidth = 5; ctx.stroke();
-      shape(); ctx.fillStyle = P.dark ? mix(P.c2, P.bg, .55) : mix(P.paper, P.c2, .18); ctx.fill();
+      shape(); ctx.strokeStyle = mix(P.line, P.bg, .68); ctx.lineWidth = 5; ctx.stroke();
+      shape(); ctx.fillStyle = P.dark ? mix(P.c2, P.bg, .68) : mix(mix(P.paper, P.c2, .18), P.bg, .2); ctx.fill();
     }
-    function drawSun(dt) {
-      // 熱浪（曬到發燙的扭曲線）
-      ctx.lineCap = 'round'; ctx.lineWidth = 2;
-      for (const s of shimmer) {
-        s.y -= s.spd * dt; if (s.y < H * .2) { s.y = H + 40; s.x = rnd(0, W); }
-        const life = Math.sin(Math.min(1, Math.max(0, (H + 40 - s.y) / (H * .8))) * Math.PI);
-        ctx.strokeStyle = rgba(P.accent, .35 * life);
-        ctx.beginPath();
-        for (let k = 0; k <= 60; k += 4) { const yy = s.y - k, xx = s.x + Math.sin(k * .15 + t * 3 + s.ph) * 4; k ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
-        ctx.stroke();
-      }
-      // 太陽
+    function drawSunDisk() {
       const R = Math.min(64, Math.max(42, W * .085)), sx = W - R * .95, sy = R * 1.05;
       const glow = ctx.createRadialGradient(sx, sy, R * .8, sx, sy, R * 2.8);
       glow.addColorStop(0, rgba(P.accent, .28)); glow.addColorStop(1, rgba(P.accent, 0));
@@ -1239,10 +1231,22 @@
       ctx.stroke();
       ctx.fillStyle = rgba(P.c3, .65);
       [[-1], [1]].forEach(([d]) => { ctx.beginPath(); ctx.ellipse(sx + d * R * .52, sy + R * .22, R * .13, R * .075, 0, 0, Math.PI * 2); ctx.fill(); });
+    }
+    function drawSun(dt) {
+      // 熱浪（曬到發燙的扭曲線）
+      ctx.lineCap = 'round'; ctx.lineWidth = 2;
+      for (const s of shimmer) {
+        s.y -= s.spd * dt; if (s.y < H * .2) { s.y = H + 40; s.x = rnd(0, W); }
+        const life = Math.sin(Math.min(1, Math.max(0, (H + 40 - s.y) / (H * .8))) * Math.PI);
+        ctx.strokeStyle = rgba(P.accent, .35 * life);
+        ctx.beginPath();
+        for (let k = 0; k <= 60; k += 4) { const yy = s.y - k, xx = s.x + Math.sin(k * .15 + t * 3 + s.ph) * 4; k ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
+        ctx.stroke();
+      }
       // 小雲
       for (const c of clouds) {
         c.x += c.spd * dt; if (c.x > W + 40) { c.x = -110 * c.s - 40; c.y = rnd(H * .12, H * .55); }
-        ctx.globalAlpha = P.dark ? .7 : .8; drawCloud(c.x, c.y, c.s); ctx.globalAlpha = 1;
+        drawCloud(c.x, c.y, c.s);
       }
       // 微風線條
       if (t > nextWind) { winds.push(mkWind(false)); nextWind = t + rnd(.7, 1.6); }
@@ -1272,7 +1276,7 @@
       if (mode === 'rain') { drawRain(dt, false); fadeCenter(W < 640 ? .25 : .4); }
       else if (mode === 'storm') { drawRain(dt, true); fadeCenter(W < 640 ? .25 : .4); drawBolt(dt); }
       else if (mode === 'waves') drawWaves(dt);
-      else if (mode === 'sun') { drawSun(dt); }
+      else if (mode === 'sun') { drawSun(dt); fadeCenter(W < 640 ? .3 : .45); drawSunDisk(); }
       if (mode === 'storm' && flash > 0) { ctx.fillStyle = rgba(P.accent, flash * .14); ctx.fillRect(0, 0, W, H); flash = Math.max(0, flash - dt * 3.2); }
       if (mode !== 'none' && !reduce && !document.hidden) raf = requestAnimationFrame(frame);
     }
