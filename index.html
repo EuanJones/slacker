@@ -107,10 +107,12 @@
   .tab{flex:1;border:0;background:transparent;font:inherit;font-weight:700;font-size:14px;padding:8px 6px;border-radius:999px;cursor:pointer;color:var(--muted);transition:.2s}
   .tab.on{background:var(--text);color:var(--paper)}
   label.lbl{display:block;font-weight:700;font-size:15px;margin-bottom:8px}
-  .money-input{display:flex;align-items:center;border:3px solid var(--line);border-radius:16px;background:var(--field);overflow:hidden;transition:transform .15s, box-shadow .15s}
+  .money-input{display:flex;align-items:stretch;border:3px solid var(--line);border-radius:16px;background:var(--field);overflow:hidden;transition:transform .15s, box-shadow .15s}
   .money-input:focus-within{transform:translateY(-2px);box-shadow:0 4px 0 var(--shadow-c)}
-  .money-input span{background:var(--accent);color:var(--on-accent);padding:14px;font-weight:800;border-right:3px solid var(--line);font-size:18px}
-  .money-input input{flex:1;border:0;outline:0;font:inherit;font-size:26px;font-weight:800;padding:10px 14px;width:100%;background:transparent;color:var(--text)}
+  .money-input span{background:var(--accent);color:var(--on-accent);padding:0 14px;display:flex;align-items:center;font-weight:800;border-right:3px solid var(--line);font-size:18px}
+  .money-input input::-webkit-outer-spin-button,.money-input input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .money-input input[type=number]{-moz-appearance:textfield;appearance:textfield}
+  .money-input input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:26px;font-weight:800;padding:12px 14px;width:100%;background:transparent;color:var(--text)}
   .money-input input::placeholder{color:var(--muted);opacity:.5}
   .hint{font-size:13px;color:var(--muted);margin-top:10px;min-height:20px;line-height:1.5}
   .hint b{color:var(--primary)}
@@ -408,15 +410,15 @@
 
     <form class="card" id="setupForm" novalidate>
       <div class="tabs" role="tablist">
-        <button type="button" class="tab on" data-mode="daily" role="tab">直接填日薪</button>
-        <button type="button" class="tab" data-mode="monthly" role="tab">用月薪換算</button>
+        <button type="button" class="tab on" data-mode="monthly" role="tab">填月薪（推薦）</button>
+        <button type="button" class="tab" data-mode="daily" role="tab">日薪制</button>
       </div>
-      <label class="lbl" for="amount" id="amountLabel">每日累計金額</label>
+      <label class="lbl" for="amount" id="amountLabel">你的月薪</label>
       <div class="money-input" id="moneyBox">
         <span>NT$</span>
-        <input id="amount" type="number" inputmode="decimal" min="0" step="any" placeholder="1500" autocomplete="off">
+        <input id="amount" type="number" inputmode="decimal" min="0" step="any" placeholder="35000" autocomplete="off">
       </div>
-      <p class="hint" id="hint">小提示：可以填真實日薪，也可以填「今天想犒賞自己的金額」。</p>
+      <p class="hint" id="hint">會依每個月的天數（28～31 天）換算每天的金額，一整個月加起來剛好等於月薪。</p>
       <button class="btn btn-next" type="submit">下一步，開始苟活 →</button>
     </form>
     <p class="footer-note">資料只存在你這台裝置的瀏覽器裡，不會上傳到任何地方。</p>
@@ -514,7 +516,6 @@
   const KEY = 'survive-salary-v1';
   const THEME_KEY = 'survive-salary-theme';
   const RESET_HOUR = 18;
-  const WORKDAYS = 30;
   const START = new Date(2026, 10, 9); // 2026/11/9 起計
   const EQUIV_KEY = 'survive-salary-equiv';
   // 換算清單：price 可以是數字或 (每日金額) => 數字
@@ -606,6 +607,7 @@
 
   const $ = s => document.querySelector(s);
   const fmt = n => Number(n).toLocaleString('zh-TW', { maximumFractionDigits: 2 });
+  const fmt0 = n => Math.round(Number(n)).toLocaleString('zh-TW');
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
   /* ---------- 角色 ---------- */
@@ -687,14 +689,15 @@
   };
 
   /* ---------- 設定頁 ---------- */
-  let mode = 'daily';
+  let mode = 'monthly';
   const amountEl = $('#amount'), hintEl = $('#hint');
   const updateHint = () => {
     const v = parseFloat(amountEl.value);
     if (mode === 'monthly') {
       hintEl.innerHTML = v > 0
-        ? `月薪 NT$${fmt(v)} ÷ ${WORKDAYS} 天 ≈ 每天 <b>NT$${fmt(Math.round(v / WORKDAYS))}</b>`
-        : `會用月薪 ÷ ${WORKDAYS} 天幫你換算日薪。`;
+        ? (() => { const n = new Date(), dim = new Date(n.getFullYear(), n.getMonth() + 1, 0).getDate();
+            return `這個月 ${n.getMonth() + 1} 月有 ${dim} 天，每天 ≈ <b>NT$${fmt0(v / dim)}</b><br>（大月小月會自動調整，整月加總剛好 NT$${fmt0(v)}）`; })()
+        : '會依每個月的天數（28～31 天）換算每天的金額，一整個月加起來剛好等於月薪。';
     } else {
       hintEl.innerHTML = v > 0
         ? `每撐過一天，就幫你記上 <b>NT$${fmt(v)}</b> 🎉`
@@ -724,16 +727,17 @@
       setTimeout(() => setMood('#setup', 'tired'), 1400);
       return;
     }
-    if (mode === 'monthly') v = Math.round(v / WORKDAYS);
     v = Math.round(v * 100) / 100;
-    // 從 START 起算，已經過了晚上 6 點的天數都算進去
     // 從 START 算到「昨天」，今天留給使用者自己按
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const days = Math.max(0, Math.round((today - START) / 864e5));
-    const total = Math.round(days * v * 100) / 100;
+    const keys = [];
+    for (const d = new Date(START); d < today; d.setDate(d.getDate() + 1)) keys.push(dateKey(d));
+    const st = mode === 'monthly' ? { monthly: v, daily: null } : { monthly: null, daily: v };
+    const days = keys.length;
+    const total = sumFor(st, keys);
     const yest = new Date(today); yest.setDate(yest.getDate() - 1);
-    save({ daily: v, total, days, last: days > 0 ? dateKey(yest) : null, early: dateKey(today), created: Date.now() });
+    save({ ...st, total, days, last: days > 0 ? dateKey(yest) : null, early: dateKey(today), created: Date.now() });
     amountEl.value = ''; setMood('#setup', 'tired'); updateHint();
     renderMain(true);
     paintTotal(0);
@@ -744,7 +748,7 @@
 
   /* ---------- 主畫面 ---------- */
   const totalEl = $('#total');
-  const paintTotal = n => { totalEl.innerHTML = `<small>NT$</small>${fmt(Math.round(n * 100) / 100)}`; };
+  const paintTotal = n => { totalEl.innerHTML = `<small>NT$</small>${fmt0(n)}`; };
   const countUp = (from, to, ms = 1200) => {
     const t0 = performance.now();
     const step = t => {
@@ -774,13 +778,20 @@
     while (true) { d.setDate(d.getDate() + 1); const k = dateKey(d); out.push(k); if (k >= t || out.length > 3660) break; }
     return out;
   };
+  // 每天的金額：月薪制 = 月薪 ÷ 該日所在月份天數；日薪制 = 固定日薪
+  const daysInMonth = k => { const d = parseKey(k); return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); };
+  const rateFor = (s, k) => s.monthly ? s.monthly / daysInMonth(k) : s.daily;
+  const sumFor = (s, keys) => keys.reduce((a, k) => a + rateFor(s, k), 0);
+  const curRate = s => rateFor(s, dateKey(new Date()));
 
   function renderMain(fresh = false) {
     const s = load(); if (!s) return;
     $('#dayBadge').textContent = `存活第 ${s.days} 天`;
     const now = new Date();
     $('#dateBadge').textContent = `${now.getMonth() + 1}/${now.getDate()} 週${'日一二三四五六'[now.getDay()]}`;
-    $('#dailyText').textContent = `+NT$${fmt(s.daily)}`;
+    $('#dailyText').textContent = s.monthly
+      ? `+NT$${fmt0(curRate(s))}（${now.getMonth() + 1} 月 ${daysInMonth(dateKey(now))} 天）`
+      : `+NT$${fmt0(s.daily)}`;
     if (!rolling) renderEquiv(s);
     if (fresh) paintTotal(s.total);
     const done = claimedToday(s);
@@ -809,7 +820,7 @@
     } else {
       const n = pendingDays(s).length;
       st.innerHTML = n > 1
-        ? `<span class="dot"></span>有 <b>${n}</b> 天薪水待認領（+NT$${fmt(n * s.daily)}）！`
+        ? `<span class="dot"></span>有 <b>${n}</b> 天薪水待認領（+NT$${fmt0(sumFor(s, pendingDays(s)))}）！`
         : `<span class="dot"></span>今日份薪水待認領！`;
     }
   }
@@ -824,14 +835,14 @@
     const s = load(); const target = claimTarget(s); if (!target) return;
     const days = pendingDays(s), n = days.length;
     const before = s.total, beforeDays = s.days;
-    const gain = Math.round(s.daily * n * 100) / 100;
-    s.total = Math.round((s.total + gain) * 100) / 100;
+    const gain = sumFor(s, days);
+    s.total = s.total + gain;
     s.days += n;
     s.last = target;
     save(s);
 
     const r = e.currentTarget.getBoundingClientRect();
-    floater(`+${fmt(gain)}`, r.left + r.width / 2, r.top);
+    floater(`+${fmt0(gain)}`, r.left + r.width / 2, r.top);
     coinRain();
     setMood('#main', 'happy'); buddyAnim('#main', 'jump');
     const ms = Object.keys(MILESTONE).map(Number).filter(m => m > beforeDays && m <= s.days).pop();
@@ -900,7 +911,7 @@
   const modalBg = $('#modalBg'), modal = $('#modal');
   let step = 0;
   const STEPS = s => [
-    { t: '確定要重來嗎？', p: `你累積的 <b>NT$${fmt(s.total)}</b> 小確幸會全部歸零喔！`, ok: '確定', cancel: '算了算了', mood: 'panic', cls: '' },
+    { t: '確定要重來嗎？', p: `你累積的 <b>NT$${fmt0(s.total)}</b> 小確幸會全部歸零喔！`, ok: '確定', cancel: '算了算了', mood: 'panic', cls: '' },
     { t: '真的真的確定？', p: `這可是你熬了 <b>${s.days} 天</b>才換來的耶…<br>你忍心嗎？`, ok: '我忍心', cancel: '我不忍心', mood: 'panic', cls: 'lv2' },
     { t: '最後一次問你！', p: '按下去就回不去了，<br>跟週一早上一樣殘酷。', ok: '對，重來！', cancel: '我反悔了', mood: 'dead', cls: 'lv3' },
   ];
@@ -938,7 +949,7 @@
   let rolling = false;
   const boxes = [...document.querySelectorAll('#equiv .slot-box')];
   const itemHTML = (it, s) =>
-    `<div class="eq-item"><span class="e-ico">${it.ico}</span><span>約 <b>${qty(it, s.total, s.daily)}</b> ${it.unit}</span>${nameHTML(it.name)}</div>`;
+    `<div class="eq-item"><span class="e-ico">${it.ico}</span><span>約 <b>${qty(it, s.total, curRate(s))}</b> ${it.unit}</span>${nameHTML(it.name)}</div>`;
   function nameHTML(n) {
     const m = n.match(/^(.*?)（(.+)）$/);
     return m ? `<span class="e-txt">${m[1]}</span><span class="e-sub">${m[2]}</span>` : `<span class="e-txt">${n}</span>`;
@@ -994,7 +1005,7 @@
     const step = t => {
       const p = Math.min(1, (t - t0) / ms);
       el.textContent = fmt(Math.round(total * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) requestAnimationFrame(step); else el.textContent = fmt(total);
+      if (p < 1) requestAnimationFrame(step); else el.textContent = fmt0(total);
     };
     requestAnimationFrame(step);
     $('#sOk').focus();
