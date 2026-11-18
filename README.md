@@ -1,6 +1,6 @@
 # 又活過一天存錢筒 🧈💰
 
-`v0.8.0` · 私人測試版
+`v0.8.1` · 私人測試版｜[更新紀錄](CHANGELOG.md)
 
 > Take each day as it comes｜打工人的每日小確幸存錢筒
 

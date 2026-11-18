@@ -230,7 +230,7 @@
   .party{position:relative;width:100%;max-width:390px;background:var(--paper);border:3px solid var(--line);border-radius:26px;box-shadow:6px 6px 0 var(--shadow-c);overflow:hidden;text-align:center;animation:partyIn .6s cubic-bezier(.2,1.5,.4,1)}
   @keyframes partyIn{0%{opacity:0;transform:scale(.4) rotate(-8deg)}100%{opacity:1;transform:none}}
   .party-banner{background:#e8443a;color:#fff;font-weight:800;font-size:15px;letter-spacing:2px;padding:8px 0;border-bottom:3px solid var(--line);text-shadow:1px 1px 0 rgba(0,0,0,.25)}
-  .stage{position:relative;height:192px;overflow:hidden;
+  .party-stage{position:relative;height:192px;overflow:hidden;
     background:linear-gradient(color-mix(in srgb, var(--accent) 22%, var(--paper)), var(--paper) 75%);border-bottom:2.5px dashed color-mix(in srgb, var(--line) 30%, transparent)}
   .lanterns{position:absolute;top:0;left:-10px;right:-10px;height:40px;display:flex;justify-content:space-around;align-items:flex-start;
     border-top:2px solid var(--line);margin-top:10px}
@@ -616,7 +616,7 @@
   <div class="rays r2"></div>
   <div class="party">
     <div class="party-banner">🏮 祝・苟活達成 🏮</div>
-    <div class="stage">
+    <div class="party-stage">
       <div class="lanterns"><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i></div>
       <div class="parade" id="parade"></div>
     </div>
@@ -659,7 +659,7 @@
 
 <script>
 (() => {
-  const VERSION = '0.8.0';
+  const VERSION = '0.8.1';
   const KEY = 'survive-salary-v1';
   const THEME_KEY = 'survive-salary-theme';
   const RESET_HOUR = 18;
