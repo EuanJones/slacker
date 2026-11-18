@@ -158,7 +158,8 @@
   .roll:hover:not(:disabled){color:var(--text);border-color:color-mix(in srgb, var(--line) 50%, transparent);background:color-mix(in srgb, var(--bg) 60%, transparent)}
   .roll:active:not(:disabled){transform:scale(.96)}
   .roll:disabled{cursor:wait}
-  .roll .dice{display:inline-block;font-size:14px;line-height:1;filter:saturate(.7)}
+  .roll .dice{display:inline-flex;font-size:14px;line-height:1}
+  .roll .dice .ui-ic{margin:0}
   .roll.spin .dice{animation:dice .5s linear infinite}
   @keyframes dice{to{transform:rotate(360deg)}}
   .equiv{display:flex;gap:8px}
@@ -170,7 +171,10 @@
   .slot-box.rolling::after{bottom:0;background:linear-gradient(transparent,color-mix(in srgb, var(--bg) 65%, var(--paper)))}
   .strip{will-change:transform}
   .eq-item{height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 4px;font-size:12.5px;font-weight:700;line-height:1.35;text-align:center;color:var(--muted)}
-  .eq-item .e-ico{font-size:24px;line-height:1.1}
+  .eq-item .e-ico{line-height:0}
+  .eq-item .art{width:36px;height:36px}
+  .ui-ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;margin-right:.35em}
+  .ui-ic.ml{margin:0 0 0 .35em}
   .eq-item .e-txt{color:var(--text);white-space:nowrap;letter-spacing:-.2px}
   .eq-item .e-sub{font-size:11px;color:var(--muted);font-weight:700;margin-top:-3px;white-space:nowrap}
   .eq-item b{font-size:17px;font-family:var(--num);color:var(--text)}
@@ -298,7 +302,7 @@
   .tp-sec{font-weight:800;font-size:14px;margin:16px 0 8px}
   .bg-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .bg-opts button{font:inherit;font-size:12px;font-weight:700;color:var(--text);background:var(--field);border:2.5px solid var(--line);border-radius:12px;padding:8px 2px 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .12s, background-color .2s}
-  .bg-opts button i{font-style:normal;font-size:20px;line-height:1}
+  .bg-opts button .ui-ic{width:22px;height:22px;margin:0}
   .bg-opts button:hover{transform:translateY(-2px)}
   .bg-opts button.on{background:var(--primary);color:#fff;box-shadow:2px 2px 0 var(--shadow-c)}
   .scheme{display:flex;background:var(--bg);border:2.5px solid var(--line);border-radius:999px;padding:3px}
@@ -500,12 +504,12 @@
     </div>
 
     <div class="card total-card">
-      <span class="tag">💰 累積的小確幸</span>
+      <span class="tag"><i data-ui="coins"></i>累積的小確幸</span>
       <div class="total" id="total"><small>NT$</small>0</div>
       <div class="daily">每活過一天 <b id="dailyText">+NT$0</b></div>
       <div class="eq-head">
-        <span>💸 這些錢可以換成…</span>
-        <button class="roll" id="rollBtn" type="button"><span class="dice">🎲</span>換一組</button>
+        <span><i data-ui="bill"></i>這些錢可以換成…</span>
+        <button class="roll" id="rollBtn" type="button"><span class="dice"><i data-ui="dice"></i></span>換一組</button>
       </div>
       <div class="equiv" id="equiv">
         <div class="slot-box"></div><div class="slot-box"></div><div class="slot-box"></div>
@@ -513,7 +517,7 @@
       <div class="eq-note">＊價格為大約估算，僅供自我安慰</div>
     </div>
 
-    <button class="btn btn-primary btn-big" id="claimBtn">🎉 恭喜自己！又活過一天！</button>
+    <button class="btn btn-primary btn-big" id="claimBtn"><i data-ui="party"></i>恭喜自己！又活過一天！</button>
     <div class="status" id="status"></div>
 
     <button class="btn-ghost" id="resetBtn">↺ 重新設定（reset）</button>
@@ -526,20 +530,20 @@
 <div class="theme-wrap">
   <div class="theme-pop" id="themePop" hidden>
     <div class="tp-title">換個顏色換個心情</div>
-    <div class="tp-sub">雖然上班還是一樣累 🫠</div>
+    <div class="tp-sub">雖然上班還是一樣累…</div>
     <div class="swatches" id="swatches"></div>
     <div class="scheme" id="scheme">
-      <button data-s="light">☀️ 亮色</button>
-      <button data-s="dark">🌙 深色</button>
-      <button data-s="auto">🖥️ 自動</button>
+      <button data-s="light"><i data-ui="sun"></i>亮色</button>
+      <button data-s="dark"><i data-ui="moon"></i>深色</button>
+      <button data-s="auto"><i data-ui="monitor"></i>自動</button>
     </div>
     <div class="tp-sec">背景動畫</div>
     <div class="bg-opts" id="bgOpts">
-      <button data-bg="none"><i>🚫</i>無</button>
-      <button data-bg="rain"><i>🌧️</i>陰雨綿綿</button>
-      <button data-bg="storm"><i>⛈️</i>暴風雨</button>
-      <button data-bg="waves"><i>🌊</i>大浪</button>
-      <button data-bg="sun"><i>☀️</i>陽光</button>
+      <button data-bg="none"><i data-ui="ban"></i>無</button>
+      <button data-bg="rain"><i data-ui="rain"></i>陰雨綿綿</button>
+      <button data-bg="storm"><i data-ui="storm"></i>暴風雨</button>
+      <button data-bg="waves"><i data-ui="wave"></i>大浪</button>
+      <button data-bg="sun"><i data-ui="sun"></i>陽光</button>
     </div>
   </div>
   <button class="theme-fab" id="themeFab" aria-label="切換配色" aria-expanded="false">
@@ -615,7 +619,7 @@
   <div class="rays"></div>
   <div class="rays r2"></div>
   <div class="party">
-    <div class="party-banner">🏮 祝・苟活達成 🏮</div>
+    <div class="party-banner"><i data-ui="lantern"></i>祝・苟活達成<i data-ui="lantern" class="ml"></i></div>
     <div class="party-stage">
       <div class="lanterns"><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i></div>
       <div class="parade" id="parade"></div>
@@ -625,7 +629,7 @@
       <h2 id="partyTitle">恭喜！第十天達成！</h2>
       <p id="partyText"></p>
       <div class="rich" id="partyRich">目前坐擁 NT$0</div>
-      <button class="btn btn-primary" id="partyOk">嗚嗚…繼續苟活 💪</button>
+      <button class="btn btn-primary" id="partyOk">嗚嗚…繼續苟活</button>
     </div>
   </div>
 </div>
@@ -638,7 +642,7 @@
     <h2 id="sTitle">偷偷告訴你～</h2>
     <p>從 11/9 到昨天，你已經默默撐了 <b id="sDays">0</b> 天<br>目前已經累積</p>
     <div class="s-amount"><small>NT$</small><span id="sAmount">0</span></div>
-    <p class="s-tail">元囉，開心點吧 😏</p>
+    <p class="s-tail">元囉，開心點吧～</p>
     <button class="btn btn-primary" id="sOk">嘿嘿，收下了！</button>
   </div>
 </div>
@@ -659,7 +663,7 @@
 
 <script>
 (() => {
-  const VERSION = '0.8.1';
+  const VERSION = '0.9.0';
   const KEY = 'survive-salary-v1';
   const THEME_KEY = 'survive-salary-theme';
   const RESET_HOUR = 18;
@@ -667,58 +671,58 @@
   const EQUIV_KEY = 'survive-salary-equiv';
   // 換算清單：price 可以是數字或 (每日金額) => 數字
   const ITEMS = [
-    { id: 'tea',     ico: '🧋', unit: '杯', name: '珍奶',         price: 65 },
-    { id: 'bento',   ico: '🍱', unit: '個', name: '便當',         price: 100 },
-    { id: 'game',    ico: '🎮', unit: '款', name: '遊戲',         price: 1290 },
-    { id: 'chicken', ico: '🍗', unit: '片', name: '大雞排',       price: 90 },
-    { id: 'latte',   ico: '☕', unit: '杯', name: '超商拿鐵',     price: 60 },
-    { id: 'icecream',ico: '🍦', unit: '支', name: '超商霜淇淋',   price: 39 },
-    { id: 'bun',     ico: '🍞', unit: '個', name: '菠蘿麵包',     price: 35 },
-    { id: 'sushi',   ico: '🍣', unit: '盤', name: '迴轉壽司',     price: 40 },
-    { id: 'burger',  ico: '🍔', unit: '份', name: '速食套餐',     price: 170 },
-    { id: 'ramen',   ico: '🍜', unit: '碗', name: '日式拉麵',     price: 280 },
-    { id: 'beer',    ico: '🍺', unit: '罐', name: '冰啤酒',       price: 45 },
-    { id: 'pizza',   ico: '🍕', unit: '個', name: '大披薩',       price: 450 },
-    { id: 'brunch',  ico: '🥞', unit: '份', name: '早午餐',       price: 220 },
-    { id: 'hotpot',  ico: '🍲', unit: '次', name: '火鍋吃到飽',   price: 750 },
-    { id: 'steak',   ico: '🥩', unit: '客', name: '牛排大餐',     price: 1200 },
-    { id: 'movie',   ico: '🎬', unit: '張', name: '電影票',       price: 330 },
-    { id: 'ktv',     ico: '🎤', unit: '次', name: 'KTV 歡唱',    price: 500 },
-    { id: 'stream',  ico: '📺', unit: '個月', name: '影音串流',   price: 390 },
-    { id: 'massage', ico: '💆', unit: '小時', name: '按摩',       price: 1000 },
-    { id: 'haircut', ico: '💇', unit: '次', name: '剪頭髮',       price: 400 },
-    { id: 'gas',     ico: '⛽', unit: '次', name: '機車加滿油',   price: 150 },
-    { id: 'catfood', ico: '🐱', unit: '個', name: '貓罐罐',       price: 35 },
-    { id: 'concert', ico: '🎟️', unit: '張', name: '演唱會門票',   price: 3800 },
-    { id: 'onsen',   ico: '♨️', unit: '晚', name: '溫泉旅館',     price: 4500 },
-    { id: 'japan',   ico: '✈️', unit: '趟', name: '日本來回機票', price: 12000 },
-    { id: 'phone',   ico: '📱', unit: '支', name: '旗艦手機',     price: 35000 },
+    { id: 'tea',     unit: '杯', name: '珍奶',         price: 65 },
+    { id: 'bento',   unit: '個', name: '便當',         price: 100 },
+    { id: 'game',    unit: '款', name: '遊戲',         price: 1290 },
+    { id: 'chicken', unit: '片', name: '大雞排',       price: 90 },
+    { id: 'latte',   unit: '杯', name: '超商拿鐵',     price: 60 },
+    { id: 'icecream',unit: '支', name: '超商霜淇淋',   price: 39 },
+    { id: 'bun',     unit: '個', name: '菠蘿麵包',     price: 35 },
+    { id: 'sushi',   unit: '盤', name: '迴轉壽司',     price: 40 },
+    { id: 'burger',  unit: '份', name: '速食套餐',     price: 170 },
+    { id: 'ramen',   unit: '碗', name: '日式拉麵',     price: 280 },
+    { id: 'beer',    unit: '罐', name: '冰啤酒',       price: 45 },
+    { id: 'pizza',   unit: '個', name: '大披薩',       price: 450 },
+    { id: 'brunch',  unit: '份', name: '早午餐',       price: 220 },
+    { id: 'hotpot',  unit: '次', name: '火鍋吃到飽',   price: 750 },
+    { id: 'steak',   unit: '客', name: '牛排大餐',     price: 1200 },
+    { id: 'movie',   unit: '張', name: '電影票',       price: 330 },
+    { id: 'ktv',     unit: '次', name: 'KTV 歡唱',    price: 500 },
+    { id: 'stream',  unit: '個月', name: '影音串流',   price: 390 },
+    { id: 'massage', unit: '小時', name: '按摩',       price: 1000 },
+    { id: 'haircut', unit: '次', name: '剪頭髮',       price: 400 },
+    { id: 'gas',     unit: '次', name: '機車加滿油',   price: 150 },
+    { id: 'catfood', unit: '個', name: '貓罐罐',       price: 35 },
+    { id: 'concert', unit: '張', name: '演唱會門票',   price: 3800 },
+    { id: 'onsen',   unit: '晚', name: '溫泉旅館',     price: 4500 },
+    { id: 'japan',   unit: '趟', name: '日本來回機票', price: 12000 },
+    { id: 'phone',   unit: '支', name: '旗艦手機',     price: 35000 },
     // ---- 網路梗區 ----
-    { id: 'gacha',   ico: '💎', unit: '單', name: '課金抽一單',     price: 3290 },
-    { id: 'nails',   ico: '💅', unit: '次', name: '美甲',           price: 1200 },
-    { id: 'claw',    ico: '🕹️', unit: '次', name: '夾娃娃（夾不到）', price: 10 },
-    { id: 'ichiban', ico: '🎁', unit: '抽', name: '一番賞',         price: 350 },
-    { id: 'blind',   ico: '🧸', unit: '個', name: '盲盒（沒隱藏版）', price: 350 },
-    { id: 'shark',   ico: '🦈', unit: '隻', name: '鯊鯊娃娃',       price: 700 },
-    { id: 'tile',    ico: '🏠', unit: '塊', name: '台北房子的地磚', price: 22000 },
-    { id: 'egg',     ico: '🥚', unit: '顆', name: '雞蛋（蛋荒價）', price: 9 },
-    { id: 'noodle',  ico: '🍜', unit: '包', name: '月底泡麵',       price: 25 },
-    { id: 'rice',    ico: '🍚', unit: '碗', name: '滷肉飯',         price: 40 },
-    { id: 'delivery',ico: '🛵', unit: '次', name: '外送（含外送費）', price: 260 },
-    { id: 'taxi',    ico: '🚕', unit: '趟', name: '累到叫小黃回家', price: 250 },
-    { id: 'gym',     ico: '🏋️', unit: '個月', name: '健身房（只去一次）', price: 1200 },
-    { id: 'books',   ico: '📚', unit: '本', name: '買了不會看的書', price: 380 },
-    { id: 'keyboard',ico: '⌨️', unit: '把', name: '第五把機械鍵盤', price: 3000 },
-    { id: 'redenv',  ico: '🧧', unit: '包', name: '同事喜酒紅包',   price: 2000 },
-    { id: 'lamp',    ico: '🏮', unit: '盞', name: '光明燈（求升官）', price: 600 },
-    { id: 'lotto',   ico: '🎱', unit: '張', name: '大樂透（買個夢）', price: 50 },
-    { id: 'shrimp',  ico: '🦐', unit: '小時', name: '釣蝦',         price: 400 },
-    { id: 'cake',    ico: '🎂', unit: '個', name: '一個人的生日蛋糕', price: 650 },
-    { id: 'flower',  ico: '💐', unit: '束', name: '送自己的花',     price: 1200 },
-    { id: 'quit',    ico: '🚪', unit: '份', name: '離職緩衝金（半年）', price: d => d * 180 },
-    { id: 'lego',    ico: '🧱', unit: '盒', name: '積木盒',       price: 2500 },
-    { id: 'leave',   ico: '🏖️', unit: '天', name: '特休（理論上）', price: d => d },
-    { id: 'life',    ico: '⏰', unit: '小時', name: '被買走的人生', price: d => d / 8 },
+    { id: 'gacha',   unit: '單', name: '課金抽一單',     price: 3290 },
+    { id: 'nails',   unit: '次', name: '美甲',           price: 1200 },
+    { id: 'claw',    unit: '次', name: '夾娃娃（夾不到）', price: 10 },
+    { id: 'ichiban', unit: '抽', name: '一番賞',         price: 350 },
+    { id: 'blind',   unit: '個', name: '盲盒（沒隱藏版）', price: 350 },
+    { id: 'shark',   unit: '隻', name: '鯊鯊娃娃',       price: 700 },
+    { id: 'tile',    unit: '塊', name: '台北房子的地磚', price: 22000 },
+    { id: 'egg',     unit: '顆', name: '雞蛋（蛋荒價）', price: 9 },
+    { id: 'noodle',  unit: '包', name: '月底泡麵',       price: 25 },
+    { id: 'rice',    unit: '碗', name: '滷肉飯',         price: 40 },
+    { id: 'delivery',unit: '次', name: '外送（含外送費）', price: 260 },
+    { id: 'taxi',    unit: '趟', name: '累到叫小黃回家', price: 250 },
+    { id: 'gym',     unit: '個月', name: '健身房（只去一次）', price: 1200 },
+    { id: 'books',   unit: '本', name: '買了不會看的書', price: 380 },
+    { id: 'keyboard',unit: '把', name: '第五把機械鍵盤', price: 3000 },
+    { id: 'redenv',  unit: '包', name: '同事喜酒紅包',   price: 2000 },
+    { id: 'lamp',    unit: '盞', name: '光明燈（求升官）', price: 600 },
+    { id: 'lotto',   unit: '張', name: '大樂透（買個夢）', price: 50 },
+    { id: 'shrimp',  unit: '小時', name: '釣蝦',         price: 400 },
+    { id: 'cake',    unit: '個', name: '一個人的生日蛋糕', price: 650 },
+    { id: 'flower',  unit: '束', name: '送自己的花',     price: 1200 },
+    { id: 'quit',    unit: '份', name: '離職緩衝金（半年）', price: d => d * 180 },
+    { id: 'lego',    unit: '盒', name: '積木盒',       price: 2500 },
+    { id: 'leave',   unit: '天', name: '特休（理論上）', price: d => d },
+    { id: 'life',    unit: '小時', name: '被買走的人生', price: d => d / 8 },
   ];
   const byId = Object.fromEntries(ITEMS.map(i => [i.id, i]));
   const priceOf = (it, daily) => typeof it.price === 'function' ? it.price(daily) : it.price;
@@ -756,6 +760,155 @@
   const fmt = n => Number(n).toLocaleString('zh-TW', { maximumFractionDigits: 2 });
   const fmt0 = n => Math.round(Number(n)).toLocaleString('zh-TW');
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  /* ---------- 自繪圖示 ---------- */
+  // 換算項目：厭世臉風格（粗框扁平＋黑眼圈表情），viewBox 48
+  const K = '#2b2118';
+  const O = `stroke="${K}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
+  const face = (x, y, s = 1) => {
+    const e = 4.6 * s, w = 2.4 * s, lx = x - e, rx = x + e;
+    return `<g stroke="${K}" stroke-linecap="round" fill="none">
+      <path d="M${lx - w} ${y}L${lx + w} ${y}M${rx - w} ${y}L${rx + w} ${y}" stroke-width="${1.8 * s}"/>
+      <path d="M${lx - w * .7} ${y}Q${lx} ${y + 2.6 * s} ${lx + w * .7} ${y}ZM${rx - w * .7} ${y}Q${rx} ${y + 2.6 * s} ${rx + w * .7} ${y}Z" fill="${K}" stroke-width="${.8 * s}"/>
+      <path d="M${lx - w} ${y + 3.2 * s}Q${lx} ${y + 4.6 * s} ${lx + w} ${y + 3.2 * s}M${rx - w} ${y + 3.2 * s}Q${rx} ${y + 4.6 * s} ${rx + w} ${y + 3.2 * s}" stroke="#8f7fb5" stroke-width="${1.3 * s}"/>
+      <path d="M${x - 2.6 * s} ${y + 6.4 * s}Q${x - 1.3 * s} ${y + 5.4 * s} ${x} ${y + 6.3 * s}Q${x + 1.3 * s} ${y + 7.2 * s} ${x + 2.6 * s} ${y + 6.2 * s}" stroke-width="${1.4 * s}"/></g>`;
+  };
+  const sweat = (x, y, s = 1) => `<path d="M${x} ${y}Q${x + 2.6 * s} ${y + 4 * s} ${x} ${y + 5.7 * s}Q${x - 2.6 * s} ${y + 4 * s} ${x} ${y}Z" fill="#7cc6fe" stroke="${K}" stroke-width="1.3"/>`;
+  const star5 = (cx, cy, R, r) => Array.from({ length: 10 }, (_, i) => {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r : R;
+    return `${i ? 'L' : 'M'}${(cx + Math.cos(a) * rr).toFixed(1)} ${(cy + Math.sin(a) * rr).toFixed(1)}`;
+  }).join('') + 'Z';
+  const P = 'var(--primary)';
+  const ART = {
+    tea: () => `<path d="M27 3L24.5 15" stroke="${K}" stroke-width="5.5" stroke-linecap="round"/><path d="M27 3L24.5 15" stroke="${P}" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M12.5 17L35.5 17L32.6 41.5Q32.2 44.5 29.5 44.5L18.5 44.5Q15.8 44.5 15.4 41.5Z" fill="#ecc89a" ${O}/>
+      <g fill="#3b2a20"><circle cx="19.5" cy="40" r="2.2"/><circle cx="24.2" cy="41" r="2.2"/><circle cx="28.8" cy="40" r="2.2"/></g>
+      <rect x="10" y="13" width="28" height="5.5" rx="2.5" fill="#fff" ${O}/>${face(24, 26, .9)}`,
+    bento: () => `<rect x="6" y="19" width="36" height="22" rx="4" fill="#eaa865" ${O}/><rect x="4.5" y="12" width="39" height="10" rx="4" fill="#e8443a" ${O}/>
+      <rect x="31" y="12" width="5" height="29" fill="#fff4d6" stroke="${K}" stroke-width="2"/>${face(18.5, 28, .9)}`,
+    game: () => `<path d="M14 15L34 15Q43 15 44.5 26L45.5 33Q46 39 41 39Q38 39 36 35L34 32L14 32L12 35Q10 39 7 39Q2 39 2.5 33L3.5 26Q5 15 14 15Z" fill="#aab4c6" ${O}/>
+      <path d="M8 21h3v-3h3v3h3v3h-3v3h-3v-3h-3z" fill="${K}"/><circle cx="37" cy="20.5" r="2.3" fill="${P}" stroke="${K}" stroke-width="1.5"/><circle cx="40.5" cy="25" r="2.3" fill="#ffd23f" stroke="${K}" stroke-width="1.5"/>${face(26, 21, .7)}`,
+    chicken: () => `<path d="M8 18Q6 10 14 9Q20 5 26 9Q33 6 37 11Q44 13 42 21Q46 29 40 34Q38 42 30 40Q24 44 18 40Q10 42 9 34Q3 27 8 18Z" fill="#dd9445" ${O}/>
+      <g fill="#f5c378"><circle cx="13" cy="16" r="1.5"/><circle cx="34" cy="14" r="1.5"/><circle cx="38" cy="27" r="1.5"/><circle cx="12" cy="31" r="1.5"/><circle cx="29" cy="37" r="1.5"/><circle cx="19" cy="36" r="1.2"/></g>${face(24, 22, 1)}`,
+    latte: () => `<path d="M13 14L35 14L32 43Q31.8 45 29.8 45L18.2 45Q16.2 45 16 43Z" fill="#fff" ${O}/><path d="M14.2 22L33.8 22L32.7 33L15.3 33Z" fill="#c08a5c" stroke="${K}" stroke-width="2"/>
+      <rect x="11" y="9" width="26" height="6" rx="3" fill="#fff" ${O}/><rect x="20" y="5.5" width="8" height="4" rx="1.5" fill="#fff" ${O}/>${face(24, 25.5, .82)}`,
+    icecream: () => `<path d="M16 25L32 25L24 45Z" fill="#e9b064" ${O}/><path d="M19 31L27.5 36M28 30L21 38" stroke="${K}" stroke-width="1.2" opacity=".45"/>
+      <path d="M13 26Q10 19 17.5 18Q16.5 10 24 9Q31 8 30.5 14.5Q37.5 14.5 35.5 21Q38 26 34 26.5Z" fill="#fff8ec" ${O}/>${face(24, 18, .85)}`,
+    bun: () => `<path d="M5 34Q5 12 24 12Q43 12 43 34Q43 38 39 38L9 38Q5 38 5 34Z" fill="#f0b44a" ${O}/>
+      <g stroke="#c98a2a" stroke-width="1.4" opacity=".8"><path d="M10 22L18 14M9 30L25 14M18 37L33 22M28 37L40 25"/><path d="M38 22L30 14M39 30L23 14M30 37L15 22M20 37L8 25"/></g>${face(24, 25, 1)}`,
+    sushi: () => `<ellipse cx="24" cy="38" rx="20" ry="6" fill="#7cc6fe" ${O}/><rect x="11" y="23" width="26" height="13" rx="6" fill="#fff" ${O}/>
+      <path d="M9 24Q10 15 24 15Q40 15 39 24Q39 27 35 26L13 26Q9 27 9 24Z" fill="#ff8a5c" ${O}/><path d="M17 17.5L15 24M24 16.5L22 25M31 17.5L29 25" stroke="#ffd2bd" stroke-width="1.6"/>${face(24, 28.5, .75)}`,
+    burger: () => `<rect x="7" y="34" width="34" height="8" rx="4" fill="#e8a54b" ${O}/><rect x="5.5" y="27" width="37" height="7" rx="3.5" fill="#6b3d26" ${O}/>
+      <path d="M6 25Q9 22 12 25Q15 28 18 25Q21 22 24 25Q27 28 30 25Q33 22 36 25Q39 28 42 25L42 28L6 28Z" fill="#7bc96f" stroke="${K}" stroke-width="2"/>
+      <path d="M7 24Q7 9 24 9Q41 9 41 24Z" fill="#e8a54b" ${O}/><g fill="#fff4d6"><ellipse cx="15" cy="13.5" rx="1.4" ry=".9"/><ellipse cx="32" cy="13" rx="1.4" ry=".9"/><ellipse cx="24" cy="11.5" rx="1.4" ry=".9"/></g>${face(24, 16, .85)}`,
+    ramen: () => `<path d="M31 4L22 24M37 6L26 24" stroke="${K}" stroke-width="4.6" stroke-linecap="round"/><path d="M31 4L22 24M37 6L26 24" stroke="#d9a066" stroke-width="2" stroke-linecap="round"/>
+      <path d="M8 24Q11 19 14 23Q17 18 20 23Q23 18 27 23Q30 19 33 23Q36 19 40 24" fill="none" stroke="#f0c75e" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M5 24L43 24Q42 41 24 42Q6 41 5 24Z" fill="#fff" ${O}/><path d="M8 36Q24 40 40 36" stroke="${P}" stroke-width="2.4" fill="none"/>${face(24, 28.5, .9)}`,
+    beer: () => `<rect x="13" y="9" width="22" height="34" rx="4" fill="#ffd23f" ${O}/><rect x="13" y="17" width="22" height="16" fill="#fff" stroke="${K}" stroke-width="2"/>
+      <path d="M16 9Q16 6 19 6L29 6Q32 6 32 9" fill="#d0d5dd" ${O}/><path d="M22 6.5L26 6.5" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>${face(24, 22.5, .85)}`,
+    pizza: () => `<path d="M24 44L8 12Q24 4 40 12Z" fill="#ffcc5c" ${O}/><path d="M8 12Q24 4 40 12L38 16.5Q24 9.5 10 16.5Z" fill="#d98a3a" ${O}/>
+      <g fill="#e8443a" stroke="${K}" stroke-width="1.5"><circle cx="15.5" cy="20.5" r="2.6"/><circle cx="33" cy="20.5" r="2.6"/><circle cx="24" cy="36" r="2.6"/></g>${face(24, 22.5, .8)}`,
+    brunch: () => `<rect x="6" y="34" width="36" height="9" rx="4.5" fill="#e8a54b" ${O}/><rect x="8" y="26" width="32" height="9" rx="4.5" fill="#efb35e" ${O}/><rect x="10" y="18" width="28" height="9" rx="4.5" fill="#e8a54b" ${O}/>
+      <path d="M12 19Q24 14 36 19L36 22Q33 22 33 26Q31 26 31 22L20 22Q18 28 16 22L12 22Z" fill="#b5651d" stroke="${K}" stroke-width="1.6"/><rect x="20" y="12" width="8" height="6" rx="1.5" fill="#fff3a8" ${O}/>${face(24, 28.5, .8)}`,
+    hotpot: () => `<path d="M14 12Q12 9 14 6M24 12Q22 9 24 5M34 12Q32 9 34 6" fill="none" stroke="#b0a69a" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M7 22L41 22L39 38Q38 42 34 42L14 42Q10 42 9 38Z" fill="#f08c5a" ${O}/><rect x="4" y="18" width="40" height="5.5" rx="2.75" fill="#aab4c6" ${O}/>
+      <path d="M7 27Q2 27 3 31M41 27Q46 27 45 31" fill="none" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>${face(24, 29, .95)}`,
+    steak: () => `<path d="M8 20Q8 10 20 11Q30 8 38 14Q46 20 41 30Q38 40 26 40Q12 42 9 32Q5 27 8 20Z" fill="#c1614a" ${O}/>
+      <path d="M12 16Q20 12 30 12" fill="none" stroke="#f6d6c0" stroke-width="3" stroke-linecap="round"/><circle cx="36" cy="22" r="3.4" fill="#fff4e6" stroke="${K}" stroke-width="1.8"/>${face(21, 24, .95)}`,
+    movie: () => `<path d="M5 13h38v7a4 4 0 0 0 0 8v7H5v-7a4 4 0 0 0 0-8z" fill="#ffd23f" ${O}/><path d="M33 14v20" stroke="${K}" stroke-width="1.6" stroke-dasharray="2.5 2.5"/>
+      <g fill="${K}" opacity=".8"><rect x="36.5" y="17" width="3" height="3" rx=".8"/><rect x="36.5" y="22.5" width="3" height="3" rx=".8"/><rect x="36.5" y="28" width="3" height="3" rx=".8"/></g>${face(18.5, 21.5, .9)}`,
+    ktv: () => `<path d="M22.5 20.5L27.5 25.5L13 41Q10.5 43 8.6 41.2Q6.8 39.4 8.8 37Z" fill="${P}" ${O}/>
+      <circle cx="30" cy="16" r="10.5" fill="#d0d5dd" ${O}/><path d="M21.5 22Q26 27 33 25.5" fill="none" stroke="${K}" stroke-width="2" opacity=".5"/>${face(30, 14.5, .78)}`,
+    stream: () => `<path d="M17 4L22 10M31 4L26 10" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/><rect x="5" y="10" width="38" height="27" rx="5" fill="#fff" ${O}/>
+      <rect x="9" y="14" width="30" height="19" rx="2.5" fill="#a8d8ff" stroke="${K}" stroke-width="1.8"/><path d="M15 37L13 42M33 37L35 42" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>${face(24, 20.5, .95)}`,
+    massage: () => `<ellipse cx="24" cy="38" rx="17" ry="6" fill="#8f949c" ${O}/><ellipse cx="24" cy="28" rx="13.5" ry="6.5" fill="#b3b8c0" ${O}/><ellipse cx="24" cy="18.5" rx="9.5" ry="5" fill="#d0d4da" ${O}/>
+      <path d="M27 13.5Q31 6 37 8Q35 14 27 13.5Z" fill="#7bc96f" stroke="${K}" stroke-width="1.8"/>${face(24, 26, .75)}`,
+    haircut: () => `<rect x="5" y="12" width="38" height="12" rx="3.5" fill="#ff9eb5" ${O}/>
+      <path d="M9 24v13M13.5 24v13M18 24v13M22.5 24v13M27 24v13M31.5 24v13M36 24v13M40 24v10" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>${face(24, 16, .75)}`,
+    gas: () => `<path d="M30 17Q38 17 38 25L38 34Q38 37 35 37" fill="none" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/><path d="M33 35L36 39" stroke="${K}" stroke-width="4" stroke-linecap="round"/>
+      <rect x="10" y="7" width="20" height="35" rx="3" fill="${P}" ${O}/><rect x="13.5" y="11" width="13" height="8" rx="2" fill="#fff8e6" stroke="${K}" stroke-width="2"/><rect x="7" y="40" width="26" height="5" rx="2" fill="#aab4c6" ${O}/>${face(20, 26, .8)}`,
+    catfood: () => `<path d="M9 18L9 38Q9 42 24 42Q39 42 39 38L39 18" fill="#d0d5dd" ${O}/><ellipse cx="24" cy="18" rx="15" ry="4.5" fill="#eef0f3" ${O}/>
+      <path d="M10 25L38 25L38 36Q24 39 10 36Z" fill="#fff" stroke="${K}" stroke-width="1.8"/><path d="M15 25L17 21L20 25M28 25L31 21L33 25" fill="#fff" stroke="${K}" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M13 31.5L17 32M13 34L17 33.3M35 31.5L31 32M35 34L31 33.3" stroke="${K}" stroke-width="1" opacity=".6"/>${face(24, 28.5, .72)}`,
+    concert: () => `<rect x="21" y="29" width="6" height="16" rx="2" fill="${P}" ${O}/><path d="${star5(24, 18, 15, 7.2)}" fill="#ffd23f" ${O}/>
+      <path d="M5 9L8 11M43 9L40 11M3 22L6.5 22M45 22L41.5 22" stroke="${K}" stroke-width="2" stroke-linecap="round" opacity=".5"/>${face(24, 18, .68)}`,
+    onsen: () => `<path d="M16 21Q13 17 16 13Q19 9 16 5M24 21Q21 17 24 13Q27 9 24 5M32 21Q29 17 32 13Q35 9 32 5" fill="none" stroke="${P}" stroke-width="3" stroke-linecap="round"/>
+      <path d="M7 26Q7 43 24 43Q41 43 41 26Z" fill="${P}" ${O}/><path d="M5 26L43 26" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>${face(24, 31, .9)}`,
+    japan: () => `<path d="M9 19L6 8L11 8L17 19Z" fill="#7cc6fe" ${O}/><path d="M4 25Q4 19 11 19L36 19Q45 19 46 25Q45 31 36 31L11 31Q4 31 4 25Z" fill="#fff" ${O}/>
+      <path d="M20 27L29 27L22 41L16.5 41Z" fill="#7cc6fe" ${O}/><g fill="#a8d8ff" stroke="${K}" stroke-width="1.2"><circle cx="14" cy="23.5" r="1.5"/><circle cx="19" cy="23.5" r="1.5"/></g>${face(34, 23, .62)}`,
+    phone: () => `<rect x="12.5" y="4" width="23" height="40" rx="5.5" fill="#3a3f4b" ${O}/><rect x="15.5" y="9" width="17" height="30" rx="2.5" fill="#a8d8ff"/><rect x="20" y="6" width="8" height="1.6" rx=".8" fill="#6b7280"/>${face(24, 20, .82)}`,
+    lego: () => `<rect x="11" y="13" width="9" height="8" rx="2" fill="#ffd23f" ${O}/><rect x="28" y="13" width="9" height="8" rx="2" fill="#ffd23f" ${O}/>
+      <rect x="6" y="19" width="36" height="22" rx="3" fill="#ffd23f" ${O}/>${face(24, 27, 1)}`,
+    leave: () => `<rect x="8" y="11" width="32" height="32" rx="4" fill="#fff" ${O}/><path d="M8 20L8 15Q8 11 12 11L36 11Q40 11 40 15L40 20Z" fill="${P}" ${O}/>
+      <path d="M16 7L16 14M32 7L32 14" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/><path d="M36 39Q36 33 33 30M33 30Q30 29 28 31M33 30Q35 27 38 28" fill="none" stroke="#7bc96f" stroke-width="2" stroke-linecap="round"/>${face(22, 27, .95)}`,
+    life: () => `<path d="M17 39L13.5 44M31 39L34.5 44" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/><circle cx="12.5" cy="12" r="5" fill="${P}" ${O}/><circle cx="35.5" cy="12" r="5" fill="${P}" ${O}/>
+      <circle cx="24" cy="26" r="15" fill="#fff" ${O}/><path d="M24 13.5v2.5M36.5 26H34M24 38.5V36M11.5 26H14" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/>${face(24, 24, .95)}${sweat(39, 19, .8)}`,
+    gacha: () => `<path d="M13 9L35 9L44 20L24 43L4 20Z" fill="#9ad7ff" ${O}/><path d="M4 20L44 20M13 9L18 20L24 43L30 20L35 9M18 20L24 9L30 20" fill="none" stroke="${K}" stroke-width="1.4" opacity=".4"/>${face(24, 23.5, .82)}`,
+    nails: () => `<rect x="18.5" y="3.5" width="11" height="14" rx="2.5" fill="#3a3f4b" ${O}/><rect x="10.5" y="16" width="27" height="28" rx="8" fill="#ff7aa8" ${O}/>
+      <path d="M15 22Q15 19.5 17.5 19.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>${face(24, 28, .95)}`,
+    claw: () => `<path d="M24 2L24 11" stroke="${K}" stroke-width="2.6"/><path d="M19 21Q8 27 13 39M29 21Q40 27 35 39M24 21L24 38" fill="none" stroke="${K}" stroke-width="3.4" stroke-linecap="round"/>
+      <rect x="15.5" y="10" width="17" height="12" rx="3.5" fill="#d0d5dd" ${O}/>${face(24, 13.5, .7)}`,
+    ichiban: () => `<rect x="8" y="20" width="32" height="22" rx="3" fill="#ff9eb5" ${O}/><rect x="6" y="14" width="36" height="8" rx="2.5" fill="#ffb8c9" ${O}/>
+      <rect x="30" y="14" width="5.5" height="28" fill="#ffd23f" stroke="${K}" stroke-width="2"/><path d="M32.7 14Q26 5 28 4Q31 3 32.7 14Q35 3 38 4Q40 6 32.7 14Z" fill="#ffd23f" stroke="${K}" stroke-width="2"/>${face(18.5, 28.5, .85)}`,
+    blind: () => `<path d="M8 17L16 9L42 9L34 17Z" fill="#d0bfff" ${O}/><path d="M34 17L42 9L42 35L34 43Z" fill="#8f75e0" ${O}/><rect x="8" y="17" width="26" height="26" fill="#b197fc" ${O}/>
+      <path d="M36.6 20.5Q36.8 17.5 39 17.8Q41 18.5 39.6 21.2L38.6 23.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="38.4" cy="26.8" r="1.1" fill="#fff"/>${face(21, 27.5, .85)}`,
+    shark: () => `<path d="M22 18L27 7L32 18Z" fill="#7aa7d6" ${O}/><path d="M38 28Q42 22 46 19Q45 28 46 37Q42 33 38 28Z" fill="#7aa7d6" ${O}/>
+      <path d="M3 28Q9 16 24 17Q36 17 41 28Q36 37 24 37Q9 38 3 28Z" fill="#7aa7d6" ${O}/><path d="M7 31Q18 37 33 33" fill="none" stroke="#e9f2fb" stroke-width="3" stroke-linecap="round"/>${face(16, 24, .75)}`,
+    tile: () => `<rect x="7" y="8" width="34" height="34" rx="3" fill="#e8dccb" ${O}/><rect x="11" y="12" width="26" height="26" rx="2" fill="none" stroke="${K}" stroke-width="1.2" opacity=".25"/>
+      <path d="M38 3.5L39.2 6.8L42.5 8L39.2 9.2L38 12.5L36.8 9.2L33.5 8L36.8 6.8Z" fill="#ffd23f" stroke="${K}" stroke-width="1.4" stroke-linejoin="round"/>${face(24, 23, 1)}`,
+    egg: () => `<path d="M24 5Q37 5 39.5 26Q40.5 43.5 24 43.5Q7.5 43.5 8.5 26Q11 5 24 5Z" fill="#fff4dc" ${O}/>${face(24, 27, 1)}`,
+    noodle: () => `<path d="M30 3L26 15M34 4L29 15" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/><path d="M10 16L38 16L35 43Q34.8 45 32.8 45L15.2 45Q13.2 45 13 43Z" fill="#fff" ${O}/>
+      <path d="M11.2 21L36.8 21L36.2 26L11.8 26Z" fill="${P}" stroke="${K}" stroke-width="1.6"/><path d="M8 16L40 16L39 12L22 13Z" fill="#e8e2d6" ${O}/>${face(24, 31, .95)}`,
+    rice: () => `<path d="M7 26Q10 14 24 14Q38 14 41 26Z" fill="#fffaf0" ${O}/><path d="M15 19Q19 13 26 15Q33 14 33 20Q30 23 22 22Q15 23 15 19Z" fill="#8b4a2b" stroke="${K}" stroke-width="1.8"/>
+      <path d="M5 26L43 26Q42 42 24 43Q6 42 5 26Z" fill="#fff" ${O}/><path d="M9 31L39 31" stroke="#7cc6fe" stroke-width="2.2"/>${face(24, 33.5, .82)}`,
+    delivery: () => `<path d="M14 12Q14 5 24 5Q34 5 34 12" fill="none" stroke="${K}" stroke-width="2.6"/><rect x="8" y="11" width="32" height="31" rx="4" fill="#4dd0a8" ${O}/>
+      <path d="M8 19L40 19" stroke="${K}" stroke-width="2"/>${face(24, 27, 1)}`,
+    taxi: () => `<rect x="19" y="5" width="10" height="5.5" rx="1.5" fill="#fff" ${O}/><path d="M6 29Q6 22 11 21L14 13Q15 10.5 18 10.5L30 10.5Q33 10.5 34 13L37 21Q42 22 42 29L42 36Q42 38 40 38L8 38Q6 38 6 36Z" fill="#ffd23f" ${O}/>
+      <path d="M15.5 21L18 13.5L30 13.5L32.5 21Z" fill="#a8d8ff" stroke="${K}" stroke-width="1.8" stroke-linejoin="round"/><rect x="8" y="37" width="7" height="6" rx="2" fill="${K}"/><rect x="33" y="37" width="7" height="6" rx="2" fill="${K}"/>
+      <circle cx="11" cy="29.5" r="2.5" fill="#fff" stroke="${K}" stroke-width="1.5"/><circle cx="37" cy="29.5" r="2.5" fill="#fff" stroke="${K}" stroke-width="1.5"/>${face(24, 26.5, .72)}`,
+    gym: () => `<path d="M15.5 21Q15 7 24 7Q33 7 32.5 21" fill="none" stroke="${K}" stroke-width="7.5" stroke-linecap="round"/><path d="M15.5 21Q15 7 24 7Q33 7 32.5 21" fill="none" stroke="#8a93a3" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="24" cy="30.5" r="13.5" fill="#aab4c6" ${O}/>${face(24, 29.5, 1)}${sweat(37, 17, .8)}`,
+    books: () => `<rect x="5" y="34" width="38" height="9" rx="2" fill="#7cc6fe" ${O}/><rect x="9" y="25" width="32" height="9" rx="2" fill="${P}" ${O}/><rect x="6" y="15" width="34" height="10" rx="2" fill="#ffd23f" ${O}/>
+      <path d="M38 36.5L38 40.5M36.5 27.5L36.5 31.5" stroke="#fff" stroke-width="1.5"/>${face(22, 17.8, .7)}`,
+    keyboard: () => `<path d="M8 28L5 38Q4.5 42 9 42L39 42Q43.5 42 43 38L40 28Z" fill="#d7dbe2" ${O}/><path d="M12 8L36 8Q40 8 40 12L40 29Q40 33 36 33L12 33Q8 33 8 29L8 12Q8 8 12 8Z" fill="#fff" ${O}/>${face(24, 18.5, 1)}`,
+    redenv: () => `<rect x="10" y="5" width="28" height="39" rx="3" fill="#e8443a" ${O}/><path d="M10 9Q24 21 38 9" fill="none" stroke="${K}" stroke-width="2"/><circle cx="24" cy="17" r="4" fill="#ffd23f" stroke="${K}" stroke-width="2"/>${face(24, 28.5, .95)}`,
+    lamp: () => `<path d="M24 5Q31 12.5 24 19.5Q17 12.5 24 5Z" fill="#ff8a3d" ${O}/><path d="M24 11Q27 14 24 17Q21 14 24 11Z" fill="#ffd23f"/><path d="M24 19.5L24 21.5" stroke="${K}" stroke-width="2"/>
+      <rect x="15" y="21" width="18" height="23" rx="2.5" fill="#ffe8a8" ${O}/><path d="M18 21Q18 26 19.5 25Q21 24 21 21" fill="#fff6d6" stroke="${K}" stroke-width="1.4"/>${face(24, 30.5, .82)}`,
+    lotto: () => `<circle cx="24" cy="24" r="18" fill="#ff9e3d" ${O}/><circle cx="24" cy="23.5" r="10.5" fill="#fff" stroke="${K}" stroke-width="2"/><path d="M11 13Q14 9 18 8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>${face(24, 22, .8)}`,
+    shrimp: () => `<path d="M14 36L5 32L7 43Z" fill="#ff8a5c" ${O}/><path d="M33 9Q45 12 43 25Q41 39 28 40.5Q18 41.5 13 36L19.5 31Q24 35 29 33.5Q35 31.5 35 25Q35.5 19 29.5 17Z" fill="#ff8a5c" ${O}/>
+      <path d="M38 30L33 27M32 36L29.5 31.5M24 37.5L23.5 33" stroke="${K}" stroke-width="1.4" opacity=".45"/><path d="M30 10Q22 4 17 7M31 13Q21 12 18 15" fill="none" stroke="${K}" stroke-width="1.6" stroke-linecap="round"/>${face(36.5, 18.5, .58)}`,
+    cake: () => `<rect x="22.5" y="11" width="3" height="12" rx="1" fill="${P}" stroke="${K}" stroke-width="1.6"/><path d="M24 4Q27.5 8 24 11Q20.5 8 24 4Z" fill="#ffd23f" stroke="${K}" stroke-width="1.6"/>
+      <rect x="7" y="23" width="34" height="20" rx="3" fill="#fff1dc" ${O}/><path d="M7 27Q7 23 10 23L38 23Q41 23 41 27L41 29Q38 32 35 29Q32 33 28 29Q24 33 20 29Q16 33 13 29Q10 32 7 29Z" fill="#ffb5c2" stroke="${K}" stroke-width="2"/>${face(24, 33, .9)}`,
+    flower: () => `<path d="M22 22L18 12M26 22L27 9M24 22L33 13" stroke="#5aa85c" stroke-width="2.4"/>
+      <circle cx="16.5" cy="13" r="6" fill="#ff9eb5" ${O}/><circle cx="32" cy="13.5" r="6" fill="#ffd23f" ${O}/><circle cx="24.5" cy="8.5" r="6" fill="#ff6b5b" ${O}/>
+      <path d="M12 21L36 21L25 45L23 45Z" fill="#e9c9a0" ${O}/>${face(24, 26.5, .72)}`,
+    quit: () => `<rect x="15" y="1.5" width="18" height="6" rx="1.5" fill="#4dd0a8" stroke="${K}" stroke-width="1.8"/><path d="M19 4.5L28 4.5M25.5 2.8L28 4.5L25.5 6.2" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+      <rect x="11" y="10" width="26" height="35" rx="2" fill="#c9773f" ${O}/><rect x="15" y="14" width="18" height="11" rx="1.5" fill="none" stroke="${K}" stroke-width="1.4" opacity=".4"/>
+      <circle cx="32" cy="29" r="1.9" fill="#ffd23f" stroke="${K}" stroke-width="1.2"/>${face(22, 32, .85)}`,
+  };
+  const art = id => `<svg class="art" viewBox="0 0 48 48" aria-hidden="true">${ART[id] ? ART[id]() : ''}</svg>`;
+
+  // 介面圖示：細線單色風格（跟著文字色），viewBox 24
+  const UI = {
+    dice: '<rect x="4" y="4" width="16" height="16" rx="4"/><g fill="currentColor" stroke="none"><circle cx="8.6" cy="8.6" r="1.3"/><circle cx="15.4" cy="8.6" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="8.6" cy="15.4" r="1.3"/><circle cx="15.4" cy="15.4" r="1.3"/></g>',
+    coins: '<ellipse cx="12" cy="6.5" rx="7" ry="3"/><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/><path d="M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>',
+    bill: '<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6 9.5v.01M18 14.5v.01"/>',
+    party: '<path d="M4 20.5L8.6 8.6l6.8 6.8z"/><path d="M13.5 4.5l.8-1.8M18.6 5.4l1.8-.9M19.5 10.5h2M15.7 3.6c1 1.6.4 3.3-1.2 3.9M20.4 13.7c-1.6-1-3.3-.4-3.9 1.2"/>',
+    check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.7 2.7L16 9.6"/>',
+    hourglass: '<path d="M6 3h12M6 21h12"/><path d="M8 3v3.5c0 2 4 3.5 4 5.5s-4 3.5-4 5.5V21M16 3v3.5c0 2-4 3.5-4 5.5s4 3.5 4 5.5V21"/>',
+    receipt: '<path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21z"/><path d="M9 8h6M9 12h6M9 16h3.5"/>',
+    beach: '<path d="M3.5 11a8.5 7 0 0 1 17 0z"/><path d="M12 11v9.5M8 20.5h8"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+    moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    monitor: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/>',
+    ban: '<circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/>',
+    rain: '<path d="M7 14.5a4 4 0 0 1 .4-8A5 5 0 0 1 17 7a3.75 3.75 0 0 1 0 7.5z"/><path d="M8.5 17.5l-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/>',
+    storm: '<path d="M7 14.5a4 4 0 0 1 .4-8A5 5 0 0 1 17 7a3.75 3.75 0 0 1 0 7.5z"/><path d="M12.8 14.5l-2.3 3.7h3.2l-2.3 3.8"/>',
+    wave: '<path d="M2 16.5c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M2 20.5c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M5 12c1-5 7-7.5 10.5-4-2.5.2-3.6 2-2.5 4"/>',
+    lantern: '<path d="M10 3h4M12 3v2M10 21h4M12 19v2"/><ellipse cx="12" cy="12" rx="6" ry="7"/><path d="M6.4 9.5h11.2M6.4 14.5h11.2"/>',
+  };
+  const ui = (name, cls = '') => `<svg class="ui-ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI[name] || ''}</svg>`;
+  document.querySelectorAll('[data-ui]').forEach(el => { el.outerHTML = ui(el.dataset.ui, el.className); });
 
   /* ---------- 角色 ---------- */
   const tpl = $('#buddyTpl');
@@ -853,7 +1006,7 @@
         : '會依每個月的天數（28～31 天）換算每天的金額，一整個月加起來剛好等於月薪。';
     } else {
       hintEl.innerHTML = v > 0
-        ? `每撐過一天，就幫你記上 <b>NT$${fmt(v)}</b> 🎉`
+        ? `每撐過一天，就幫你記上 <b>NT$${fmt(v)}</b>`
         : '小提示：可以填真實日薪，也可以填「今天想犒賞自己的金額」。';
     }
   };
@@ -953,10 +1106,10 @@
     const target = claimTarget(s);
     const wk = !!target && isWeekendKey(target);
     const pend = pendingDays(s).length;
-    btn.textContent = done ? (waitingFor6(s) ? '⏳ 傍晚 6 點後才能領今天的份' : '✅ 今天已經活過了')
-      : isBackfill(target) ? `🧾 補領 ${pend} 天薪水（領到昨天）`
-      : pend > 1 ? `🎉 恭喜自己！一口氣領 ${pend} 天！`
-      : wk ? '🏖️ 假日也活過一天！薪水照領！' : '🎉 恭喜自己！又活過一天！';
+    btn.innerHTML = done ? (waitingFor6(s) ? ui('hourglass') + '傍晚 6 點後才能領今天的份' : ui('check') + '今天已經活過了')
+      : isBackfill(target) ? ui('receipt') + `補領 ${pend} 天薪水（領到昨天）`
+      : pend > 1 ? ui('party') + `恭喜自己！一口氣領 ${pend} 天！`
+      : wk ? ui('beach') + '假日也活過一天！薪水照領！' : ui('party') + '恭喜自己！又活過一天！';
     if (fresh) {
       $('#bubble').textContent = waitingFor6(s) ? pick(LINES_BEFORE6) : done ? pick(LINES_CLAIMED) : wk ? pick(LINES_WEEKEND_WAIT) : pick(LINES_WAIT);
       setMood('#main', waitingFor6(s) ? 'tired' : done ? 'happy' : wk ? 'smug' : 'tired');
@@ -1116,7 +1269,7 @@
   let rolling = false;
   const boxes = [...document.querySelectorAll('#equiv .slot-box')];
   const itemHTML = (it, s) =>
-    `<div class="eq-item"><span class="e-ico">${it.ico}</span><span>約 <b>${qty(it, s.total, curRate(s))}</b> ${it.unit}</span>${nameHTML(it.name)}</div>`;
+    `<div class="eq-item"><span class="e-ico">${art(it.id)}</span><span>約 <b>${qty(it, s.total, curRate(s))}</b> ${it.unit}</span>${nameHTML(it.name)}</div>`;
   function nameHTML(n) {
     const m = n.match(/^(.*?)（(.+)）$/);
     return m ? `<span class="e-txt">${m[1]}</span><span class="e-sub">${m[2]}</span>` : `<span class="e-txt">${n}</span>`;
@@ -1188,7 +1341,7 @@
   function closeParty() {
     partyBg.classList.remove('show');
     parade.innerHTML = '';
-    say('哭完了，明天繼續撐 🥲');
+    say('哭完了，明天繼續撐…');
     setMood('#main', 'happy'); buddyAnim('#main', 'jump');
     if (window.__DEMO_DAY10) $('#demoReplay').hidden = false;
   }
