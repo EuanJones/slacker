@@ -182,6 +182,7 @@
   .status .clock{font-family:var(--num);color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:8px;padding:1px 8px;margin:0 2px;font-variant-numeric:tabular-nums}
   .status .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--primary);margin-right:6px;animation:blink 1s infinite}
   @keyframes blink{50%{opacity:.25}}
+  .ver{margin-top:22px;text-align:center;font-family:var(--num);font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--muted);opacity:.6}
   .footer-note{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;opacity:.85}
 
   /* 特效 */
@@ -210,6 +211,59 @@
   .btn-danger{background:var(--field);color:var(--primary)}
   .btn-danger.lv2{background:var(--c3);color:var(--on-accent)}
   .btn-danger.lv3{background:var(--primary);color:#fff}
+
+  /* =========================================================
+     第 N 天達成：祭典大 popup
+     ========================================================= */
+  .party-bg{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,10,8,.72);overflow:hidden}
+  .party-bg.show{display:flex}
+  .rays{position:absolute;left:50%;top:50%;width:220vmax;height:220vmax;margin:-110vmax 0 0 -110vmax;pointer-events:none;
+    background:repeating-conic-gradient(from 0deg, rgba(255,214,64,.42) 0deg 7deg, rgba(255,214,64,0) 7deg 18deg);
+    -webkit-mask:radial-gradient(circle, #000 0%, rgba(0,0,0,.85) 12%, transparent 42%);
+            mask:radial-gradient(circle, #000 0%, rgba(0,0,0,.85) 12%, transparent 42%);
+    animation:raysSpin 24s linear infinite}
+  .rays.r2{background:repeating-conic-gradient(from 9deg, rgba(255,240,170,.25) 0deg 3deg, rgba(255,240,170,0) 3deg 18deg);animation-duration:36s;animation-direction:reverse}
+  .rays-glow{position:absolute;left:50%;top:50%;width:90vmin;height:90vmin;margin:-45vmin 0 0 -45vmin;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle, rgba(255,226,110,.55), rgba(255,200,40,.18) 45%, transparent 70%);animation:glowPulse 2.4s ease-in-out infinite}
+  @keyframes raysSpin{to{transform:rotate(360deg)}}
+  @keyframes glowPulse{50%{transform:scale(1.12);opacity:.8}}
+  .party{position:relative;width:100%;max-width:390px;background:var(--paper);border:3px solid var(--line);border-radius:26px;box-shadow:6px 6px 0 var(--shadow-c);overflow:hidden;text-align:center;animation:partyIn .6s cubic-bezier(.2,1.5,.4,1)}
+  @keyframes partyIn{0%{opacity:0;transform:scale(.4) rotate(-8deg)}100%{opacity:1;transform:none}}
+  .party-banner{background:#e8443a;color:#fff;font-weight:800;font-size:15px;letter-spacing:2px;padding:8px 0;border-bottom:3px solid var(--line);text-shadow:1px 1px 0 rgba(0,0,0,.25)}
+  .stage{position:relative;height:192px;overflow:hidden;
+    background:linear-gradient(color-mix(in srgb, var(--accent) 22%, var(--paper)), var(--paper) 75%);border-bottom:2.5px dashed color-mix(in srgb, var(--line) 30%, transparent)}
+  .lanterns{position:absolute;top:0;left:-10px;right:-10px;height:40px;display:flex;justify-content:space-around;align-items:flex-start;
+    border-top:2px solid var(--line);margin-top:10px}
+  .lantern{width:18px;height:23px;margin-top:4px;border-radius:45%;border:2px solid #2b2118;position:relative;transform-origin:50% -6px;animation:swing 1.6s ease-in-out infinite alternate;
+    background:repeating-linear-gradient(#e8443a 0 4px, #c92f26 4px 5px)}
+  .lantern:nth-child(even){animation-delay:-.8s;background:repeating-linear-gradient(#ffd23f 0 4px, #f0b400 4px 5px)}
+  .lantern::before,.lantern::after{content:"";position:absolute;left:3px;right:3px;height:3px;background:#2b2118;border-radius:1px}
+  .lantern::before{top:-4px}.lantern::after{bottom:-4px}
+  @keyframes swing{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+  .parade{position:absolute;inset:0}
+  .dancer{position:absolute;bottom:4px;left:100%;width:100px;height:109px;animation:march 10s linear infinite backwards}
+  @keyframes march{from{left:100%}to{left:-110px}}
+  .dancer .hop{width:100%;height:100%;animation:hop .46s ease-in-out infinite alternate}
+  .dancer:nth-child(odd) .hop{animation-delay:-.23s}
+  @keyframes hop{0%{transform:translateY(0) rotate(-6deg)}100%{transform:translateY(-16px) rotate(6deg)}}
+  .dancer svg{width:100%;height:100%;overflow:visible}
+  .fanarm{transform-box:view-box;transform-origin:82px 70px;animation:fanwave .46s ease-in-out infinite alternate}
+  .dancer:nth-child(odd) .fanarm{animation-delay:-.23s}
+  @keyframes fanwave{from{transform:rotate(-22deg)}to{transform:rotate(18deg)}}
+  .backarm{transform-box:view-box;transform-origin:28px 70px;animation:armwave .46s ease-in-out infinite alternate-reverse}
+  @keyframes armwave{from{transform:rotate(-18deg)}to{transform:rotate(16deg)}}
+  .stream{transform-box:fill-box;transform-origin:50% 0;animation:stream .35s ease-in-out infinite alternate}
+  @keyframes stream{from{transform:scaleY(.85)}to{transform:scaleY(1.12)}}
+  .dshadow{animation:dshadow .46s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+  @keyframes dshadow{to{transform:scale(.7);opacity:.5}}
+  .party-body{padding:16px 20px 20px}
+  .party-day{font-family:var(--num);font-weight:900;font-size:40px;line-height:1.1;color:var(--primary);-webkit-text-stroke:5px var(--line);paint-order:stroke fill;text-shadow:3px 3px 0 var(--line);margin-bottom:6px}
+  .party h2{font-size:21px;font-weight:800;margin-bottom:8px}
+  .party p{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:12px}
+  .party .rich{font-size:14px;font-weight:700;color:var(--text);background:color-mix(in srgb, var(--accent) 30%, var(--paper));border:2px solid var(--line);border-radius:12px;display:inline-block;padding:4px 12px;margin-bottom:16px}
+  .party .btn-primary{font-size:18px;padding:14px}
+  .fan-band{fill:var(--primary)}
+  .demo-replay{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:95;font:inherit;font-weight:800;font-size:14px;background:#e8443a;color:#fff;border:3px solid var(--line);border-radius:999px;padding:10px 16px;box-shadow:3px 3px 0 var(--shadow-c);cursor:pointer}
 
   /* 偷偷告訴你 */
   .secret{position:relative;padding-top:26px}
@@ -465,6 +519,7 @@
     <button class="btn-ghost" id="resetBtn">↺ 重新設定（reset）</button>
     <p class="footer-note">每天傍晚 6 點刷新，一天只能按一次。<br>資料存在這台裝置的瀏覽器，清除瀏覽資料就會不見喔。</p>
   </section>
+  <p class="ver" id="ver"></p>
 </div>
 
 <!-- 角落配色切換 -->
@@ -501,6 +556,80 @@
 <!-- 特效層 -->
 <div class="fx" id="fx"></div>
 
+<!-- 第 N 天達成：祭典 popup -->
+<template id="dancerTpl">
+  <div class="dancer"><div class="hop">
+    <svg viewBox="0 0 120 130" aria-hidden="true">
+      <ellipse class="dshadow" cx="55" cy="122" rx="28" ry="4" fill="rgba(0,0,0,.22)"/>
+      <!-- 後手 -->
+      <g class="backarm">
+        <path d="M28 72 Q14 68 9 58" fill="none" stroke="#2b2118" stroke-width="3.5" stroke-linecap="round"/>
+        <circle class="b-hand" cx="9" cy="56" r="4.5" stroke="#2b2118" stroke-width="2.5"/>
+      </g>
+      <!-- 身體 -->
+      <path class="b-body" d="M34 36 Q55 31 76 36 Q84 38 84 48 L86 104 Q86 116 74 116 L36 116 Q24 116 24 104 L26 48 Q26 38 34 36 Z" stroke="#2b2118" stroke-width="3" stroke-linejoin="round"/>
+      <!-- 頭髮（開心到翹起來） -->
+      <path d="M57 35 C55 23 63 16 69 13" fill="none" stroke="#2b2118" stroke-width="3" stroke-linecap="round"/>
+      <!-- 紅色法被 -->
+      <g stroke="#2b2118" stroke-width="2.5" stroke-linejoin="round">
+        <path d="M25.6 76 L45 76 L51 116 L36 116 Q24 116 24 104 Z" fill="#e8443a"/>
+        <path d="M84.4 76 L65 76 L59 116 L74 116 Q86 116 86 104 Z" fill="#e8443a"/>
+        <path d="M43 76 L48 76 L54 116 L49 116 Z" fill="#fff" stroke-width="1.6"/>
+        <path d="M67 76 L62 76 L56 116 L61 116 Z" fill="#fff" stroke-width="1.6"/>
+        <path d="M24.5 100 L85.5 100 L85.8 107 L24.2 107 Z" fill="#2b2118" stroke-width="0"/>
+      </g>
+      <circle cx="35" cy="89" r="6.5" fill="#fff" stroke="#2b2118" stroke-width="1.8"/>
+      <text x="35" y="92.3" text-anchor="middle" font-size="9" font-weight="900" fill="#e8443a" font-family="Noto Sans TC,sans-serif">祭</text>
+      <!-- 頭巾 -->
+      <path d="M26.5 45 Q55 39 83.5 45 L83.6 52 Q55 46 26.4 52 Z" fill="#fff" stroke="#2b2118" stroke-width="2"/>
+      <path d="M27 48.5 Q55 42.5 83 48.5" fill="none" stroke="#e8443a" stroke-width="2.2"/>
+      <path d="M85 49 Q95 50 98 59 M85 48 Q95 43 100 46" fill="none" stroke="#2b2118" stroke-width="6" stroke-linecap="round"/>
+      <path d="M85 49 Q95 50 98 59 M85 48 Q95 43 100 46" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="85" cy="48.5" r="3.6" fill="#fff" stroke="#2b2118" stroke-width="2"/>
+      <!-- 黑眼圈 -->
+      <path d="M37 66.5 Q43 70.5 49 66.5 M61 66.5 Q67 70.5 73 66.5" fill="none" stroke="#a597c4" stroke-width="2.2" stroke-linecap="round"/>
+      <!-- 笑著哭 -->
+      <path d="M37 62 Q43 54 49 62 M61 62 Q67 54 73 62" fill="none" stroke="#2b2118" stroke-width="3" stroke-linecap="round"/>
+      <path class="stream" d="M38 63 Q35 72 37 86 Q41 82 42 64 Z" fill="#7cc6fe" stroke="#2b2118" stroke-width="1.5" stroke-linejoin="round"/>
+      <path class="stream" d="M72 63 Q75 72 73 86 Q69 82 68 64 Z" fill="#7cc6fe" stroke="#2b2118" stroke-width="1.5" stroke-linejoin="round"/>
+      <ellipse cx="33" cy="74" rx="5" ry="3" fill="#ffb5c2"/><ellipse cx="77" cy="74" rx="5" ry="3" fill="#ffb5c2"/>
+      <path d="M46 70 Q55 86 64 70 Z" fill="#ff6b5b" stroke="#2b2118" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M51 76.5 Q55 80 59 76.5" fill="none" stroke="#c92f26" stroke-width="2" stroke-linecap="round"/>
+      <!-- 前手拿扇子 -->
+      <g class="fanarm">
+        <path d="M82 72 Q95 66 98 52" fill="none" stroke="#2b2118" stroke-width="3.5" stroke-linecap="round"/>
+        <path class="fan-band" d="M98 48 L80.8 23.4 A30 30 0 0 1 115.2 23.4 Z" stroke="#2b2118" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M98 48 L86.5 31.6 A20 20 0 0 1 109.5 31.6 Z" fill="#fff"/>
+        <g stroke="#2b2118" stroke-width="1" opacity=".45">
+          <line x1="98" y1="48" x2="86.5" y2="24.8"/><line x1="98" y1="48" x2="92" y2="19"/><line x1="98" y1="48" x2="98" y2="18"/>
+          <line x1="98" y1="48" x2="104" y2="19"/><line x1="98" y1="48" x2="109.5" y2="24.8"/>
+        </g>
+        <circle cx="98" cy="37" r="4.2" fill="#e8443a"/>
+        <circle class="b-hand" cx="98" cy="50" r="4.5" stroke="#2b2118" stroke-width="2.5"/>
+      </g>
+    </svg>
+  </div></div>
+</template>
+<div class="party-bg" id="partyBg" role="dialog" aria-modal="true" aria-labelledby="partyTitle">
+  <div class="rays-glow"></div>
+  <div class="rays"></div>
+  <div class="rays r2"></div>
+  <div class="party">
+    <div class="party-banner">🏮 祝・苟活達成 🏮</div>
+    <div class="stage">
+      <div class="lanterns"><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i><i class="lantern"></i></div>
+      <div class="parade" id="parade"></div>
+    </div>
+    <div class="party-body">
+      <div class="party-day" id="partyDay">第 10 天</div>
+      <h2 id="partyTitle">恭喜！第十天達成！</h2>
+      <p id="partyText"></p>
+      <div class="rich" id="partyRich">目前坐擁 NT$0</div>
+      <button class="btn btn-primary" id="partyOk">嗚嗚…繼續苟活 💪</button>
+    </div>
+  </div>
+</div>
+
 <!-- 偷偷告訴你 -->
 <div class="modal-bg" id="secretBg" role="dialog" aria-modal="true" aria-labelledby="sTitle">
   <div class="modal secret">
@@ -530,6 +659,7 @@
 
 <script>
 (() => {
+  const VERSION = '0.8.0';
   const KEY = 'survive-salary-v1';
   const THEME_KEY = 'survive-salary-theme';
   const RESET_HOUR = 18;
@@ -895,6 +1025,8 @@
     ]);
     else line = isWeekendKey(target) ? pick(LINES_WEEKEND_DONE) : pick(LINES_DONE);
     say(line);
+    const partyDay = Object.keys(PARTY).map(Number).filter(m => m > beforeDays && m <= s.days).pop();
+    if (partyDay) { say('等等…今天好像是特別的日子？'); setTimeout(() => openParty(partyDay, s.total), 1300); }
     countUp(before, s.total);
     setTimeout(() => { totalEl.classList.remove('bump'); void totalEl.offsetWidth; totalEl.classList.add('bump'); }, 1150);
     renderMain(false);
@@ -1027,6 +1159,40 @@
       };
     });
   });
+
+  /* ---------- 第 N 天達成：祭典 popup ---------- */
+  const PARTY = {
+    10: { day: '第 10 天', title: '恭喜！第十天達成！',
+          text: '日子雖然但還是過下去了嘛～<br>至少陣亡的時候可以說<br>我還是坐擁著錢掛掉的…' },
+  };
+  const partyBg = $('#partyBg'), parade = $('#parade');
+  const DANCERS = 5, MARCH = 11;   // 隊伍人數、走完一趟的秒數
+  function openParty(day, total) {
+    const cfg = PARTY[day]; if (!cfg) return false;
+    $('#partyDay').textContent = cfg.day;
+    $('#partyTitle').textContent = cfg.title;
+    $('#partyText').innerHTML = cfg.text;
+    $('#partyRich').textContent = `目前坐擁 NT$${fmt0(total)}`;
+    parade.innerHTML = '';
+    const tplD = $('#dancerTpl');
+    for (let i = 0; i < DANCERS; i++) {
+      const d = tplD.content.firstElementChild.cloneNode(true);
+      d.style.animationDuration = MARCH + 's';
+      d.style.animationDelay = (i * MARCH / DANCERS) + 's';   // 一個接一個從右邊進場
+      parade.appendChild(d);
+    }
+    partyBg.classList.add('show');
+    setTimeout(() => $('#partyOk').focus(), 50);
+    return true;
+  }
+  function closeParty() {
+    partyBg.classList.remove('show');
+    parade.innerHTML = '';
+    say('哭完了，明天繼續撐 🥲');
+    setMood('#main', 'happy'); buddyAnim('#main', 'jump');
+    if (window.__DEMO_DAY10) $('#demoReplay').hidden = false;
+  }
+  $('#partyOk').addEventListener('click', closeParty);
 
   /* ---------- 偷偷告訴你 ---------- */
   const secretBg = $('#secretBg');
@@ -1399,13 +1565,25 @@
   document.addEventListener('click', e => { if (!pop.hidden && !e.target.closest('.theme-wrap')) togglePop(false); });
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
-    if (modalBg.classList.contains('show')) $('#mCancel').click();
+    if (partyBg.classList.contains('show')) closeParty();
+    else if (modalBg.classList.contains('show')) $('#mCancel').click();
     else togglePop(false);
   });
   applyTheme();
   BG.setMode(pref.bg);
 
+  /* ---------- demo 模式（僅 demo 頁面注入 __DEMO_DAY10 時啟用） ---------- */
+  if (window.__DEMO_DAY10) {
+    if (!load()) save({ monthly: 33000, daily: null, total: 11000, days: 10, last: cycleKey(), created: Date.now() });
+    const rb = document.createElement('button');
+    rb.id = 'demoReplay'; rb.className = 'demo-replay'; rb.textContent = '▶ 再看一次第 10 天'; rb.hidden = true;
+    rb.addEventListener('click', () => { rb.hidden = true; coinRain(); openParty(10, (load() || {}).total || 11000); });
+    document.body.appendChild(rb);
+    setTimeout(() => { coinRain(); openParty(10, (load() || {}).total || 11000); }, 700);
+  }
+
   /* ---------- 啟動 ---------- */
+  $('#ver').textContent = `v${VERSION} · 私人測試版`;
   if (load()) { renderMain(true); show('main'); }
   else show('setup');
 })();
